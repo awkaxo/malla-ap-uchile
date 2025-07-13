@@ -18,7 +18,7 @@ function cargarRamos() {
         ramosSeleccionados = doc.data().ramos || [];
         ramosSeleccionados.forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.classList.add("tomado"); // adapta esta clase a tu estilo
+          if (el) el.classList.add("approved");
         });
       }
     });
@@ -39,20 +39,4 @@ function login(email, pass) {
           guardarRamos();
         });
     });
-}
-
-// Lógica para marcar y desmarcar ramos
-function marcarRamo(id) {
-  const index = ramosSeleccionados.indexOf(id);
-  const el = document.getElementById(id);
-
-  if (index > -1) {
-    ramosSeleccionados.splice(index, 1);
-    el.classList.remove("tomado");
-  } else {
-    ramosSeleccionados.push(id);
-    el.classList.add("tomado");
-  }
-
-  guardarRamos();
 }
