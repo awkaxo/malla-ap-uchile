@@ -1,57 +1,130 @@
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #fff5fa;
-    color: #4a4a4a;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-}
-
-header {
-    background-color: #ffe0eb;
-    padding: 1rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-h1 {
-    color: #b6578d;
-}
-
+/* Contenedor principal */
 #malla {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 1rem;
+  max-width: 900px;
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  padding: 0 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Cada ramo */
 .ramo {
-    background-color: #fdf0f5;
-    border: 2px solid #f4b8d9;
-    border-radius: 10px;
-    padding: 1rem;
-    margin: 0.5rem;
-    width: 220px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100px;
+  color: #222;
+  font-weight: 600;
+  user-select: none;
+  border: 3px solid transparent;
 }
 
-.ramo.locked {
-    opacity: 0.4;
-    pointer-events: none;
+/* Hover para ramos desbloqueados */
+.ramo:not(.locked):hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  border-color: #007bff;
 }
 
+/* Estado aprobado */
 .ramo.approved {
-    background-color: #d6f5e3;
-    border-color: #6fc7a3;
-    color: #357a5a;
+  border-color: #0d6efd;
+  background-color: #d0e6ff !important;
+  box-shadow: 0 0 12px #0d6efd88;
+  color: #0b3d91;
 }
 
-button {
-    margin-top: 0.5rem;
-    padding: 0.3rem 1rem;
-    font-size: 0.9rem;
-    background-color: #b6578d;
-    color: white;
-    border: none;
-    border-radius: 5px;
+/* Estado bloqueado */
+.ramo.locked {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: grayscale(50%);
+}
+
+/* Botón */
+.ramo button {
+  margin-top: 10px;
+  background-color: #0d6efd;
+  color: white;
+  font-weight: 700;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.ramo button:hover:not(:disabled) {
+  background-color: #084cd9;
+}
+
+.ramo button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+/* Header */
+header {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 15px;
+  text-align: center;
+}
+
+header h1 {
+  font-weight: 900;
+  margin-bottom: 10px;
+  color: #0d6efd;
+}
+
+header p {
+  font-weight: 500;
+  color: #555;
+}
+
+/* Login */
+#login {
+  max-width: 400px;
+  margin: 20px auto 40px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+#login input {
+  flex-grow: 1;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1.5px solid #ccc;
+  transition: border-color 0.3s ease;
+}
+
+#login input:focus {
+  border-color: #0d6efd;
+  outline: none;
+}
+
+#login button {
+  padding: 8px 16px;
+  background-color: #0d6efd;
+  border: none;
+  color: white;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#login button:hover {
+  background-color: #084cd9;
 }
