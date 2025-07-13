@@ -1,17 +1,31 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malla Administración Pública UChile - Interactiva</title>
-    <link rel="stylesheet" href="style.css">
-</head>
 <body>
     <header>
-        <h1>🎓 Malla Interactiva Administración Publica - Universidad de Chile</h1>
+        <h1>🎓 Malla Interactiva Administración Pública - Universidad de Chile</h1>
         <p>Toque los ramos para marcar aprobación. Los prerrequisitos se activan automáticamente.</p>
     </header>
+
     <main id="malla"></main>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_BUCKET.appspot.com",
+            messagingSenderId: "XXXXX",
+            appId: "APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+
+    <script src="firebase-login.js"></script>
     <script src="script.js"></script>
 </body>
-</html>
