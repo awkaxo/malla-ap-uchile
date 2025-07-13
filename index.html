@@ -12,38 +12,181 @@
     <p>Toque los ramos para marcar aprobación. Los prerrequisitos se activan automáticamente.</p>
   </header>
 
-  <section id="login">
-    <input type="email" id="email" placeholder="Correo UChile" />
+  <div id="login">
+    <h2>Iniciar sesión / Crear cuenta</h2>
+    <input type="email" id="email" placeholder="Correo electrónico" />
     <input type="password" id="password" placeholder="Contraseña" />
-    <button onclick="login()">Ingresar</button>
-    <button onclick="crearCuenta()">Crear cuenta</button>
-  </section>
+    <button onclick="login()">Iniciar sesión</button>
+    <button onclick="signup()">Crear cuenta</button>
+    <button onclick="logout()" style="display:none" id="logoutBtn">Cerrar sesión</button>
+  </div>
 
-  <main id="malla"></main>
+  <main id="malla" style="display:none;"></main>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
 
   <script>
-    // Configura aquí tus datos de Firebase (pon tus claves reales)
+    // Configura tu Firebase aquí (reemplaza con tu config real)
     const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_PROYECTO.firebaseapp.com",
-      projectId: "TU_PROJECT_ID",
-      storageBucket: "TU_BUCKET.appspot.com",
-      messagingSenderId: "TU_MESSAGING_SENDER_ID",
-      appId: "TU_APP_ID"
+      apiKey: "AIzaSyC0y-ES5y6c8uiYMKew-TEv-wz_iMbXaJc",
+      authDomain: "malla-interactiva.firebaseapp.com",
+      projectId: "malla-interactiva",
+      storageBucket: "malla-interactiva.firebasestorage.app",
+      messagingSenderId: "1084098910135",
+      appId: "1:1084098910135:web:62633e770f70cf534bba32",
+      measurementId: "G-SG22ZFKRMD"
     };
 
-    // Inicializa Firebase
+    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-  </script>
 
-  <script src="firebase-login.js"></script>
-  <script src="script.js"></script>
+    // Estado del usuario
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+        document.getElementById('malla').style.display = 'grid';
+        cargarEstado(user.uid);
+      } else {
+        document.getElementById('login').style.display = 'block';
+        document.getElementById('logoutBtn').style.display = 'none';
+        document.getElementById('malla').style.display = 'none';
+      }
+    });
+
+    // Funciones de login, signup y logout
+    function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(e => alert('Error al iniciar sesión: ' + e.message));
+    }
+
+    function signup() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      auth.createUserWithEmailAndPassword(email, password)
+        .catch(e => alert('Error al crear cuenta: ' + e.message));
+    }
+
+    function logout() {
+      auth.signOut();
+    }
+
+    // Aquí va tu arreglo de ramos:
+    const ramos = [
+      { id: "mat1", nombre: "🎓 Matemática para la Gestión I", color: "#ffe0eb", prereq: [] },
+      { id: "intro", nombre: "🎓 Introducción a la Gestión Pública", color: "#ffe0eb", prereq: [] },
+      { id: "histinst", nombre: "🎓 Historia de las Instituciones Políticas de Chile", color: "#ffe0eb", prereq: [] },
+      { id: "sistemasinfo", nombre: "🎓 Tecnologías y Sistemas de Información", color: "#ffe0eb", prereq: [] },
+      { id: "basesjur", nombre: "🎓 Bases Jurídicas para la Administración del Estado", color: "#ffe0eb", prereq: [] },
+      { id: "ingles1", nombre: "🎓 Inglés I", color: "#ffe0eb", prereq: [] },
+      { id: "curso1", nombre: "🎓 Curso Libre I", color: "#ffe0eb", prereq: [] },
+      { id: "mat2", nombre: "📘 Matemática para la Gestión II", color: "#fce1ff", prereq: ["mat1"] },
+      { id: "evo", nombre: "📘 Evolución y Complejidad de la Administración Pública", color: "#fce1ff", prereq: ["intro"] },
+      { id: "ideas", nombre: "📘 Ideas y Debates Políticos Contemporáneos", color: "#fce1ff", prereq: [] },
+      { id: "epistem", nombre: "📘 Epistemología de las Ciencias Sociales", color: "#fce1ff", prereq: [] },
+      { id: "marconorm1", nombre: "📘 Marco Normativo I", color: "#fce1ff", prereq: ["basesjur"] },
+      { id: "ingles2", nombre: "📘 Inglés II", color: "#fce1ff", prereq: ["ingles1"] },
+      { id: "curso2", nombre: "📘 Curso Libre II", color: "#fce1ff", prereq: ["curso1"] },
+      { id: "estad1", nombre: "📊 Estadística para la Gestión I", color: "#d1f5f0", prereq: ["mat2"] },
+      { id: "admin", nombre: "📊 Comportamiento Humano en la Organización", color: "#d1f5f0", prereq: ["evo"] },
+      { id: "fenomenos", nombre: "📊 Fenómenos Políticos", color: "#d1f5f0", prereq: ["ideas"] },
+      { id: "micro", nombre: "📊 Microeconomía para la Gestión Pública", color: "#d1f5f0", prereq: ["mat2"] },
+      { id: "marconorm2", nombre: "📊 Marco Normativo II", color: "#d1f5f0", prereq: ["marconorm1"] },
+      { id: "metodocuali", nombre: "📊 Métodos Cualitativos", color: "#d1f5f0", prereq: ["epistem"] },
+      { id: "polintl", nombre: "🌍 Política Internacional", color: "#fef5d6", prereq: ["fenomenos"] },
+      { id: "diseñoorg", nombre: "🌍 Diseño Organizacional", color: "#fef5d6", prereq: ["admin"] },
+      { id: "metodocuanti", nombre: "🌍 Métodos Cuantitativos", color: "#fef5d6", prereq: ["estad1"] },
+      { id: "planeamiento", nombre: "🌍 Planeamiento Estratégico", color: "#fef5d6", prereq: ["diseñoorg"] },
+      { id: "gestionfin", nombre: "🌍 Gestión Financiera Pública", color: "#fef5d6", prereq: ["micro"] },
+      { id: "negociacion", nombre: "🧠 Negociación y Resolución de Conflictos", color: "#e3f0ff", prereq: ["admin"] },
+      { id: "polpublica", nombre: "🧠 Ciclo y Evaluación de Políticas Públicas", color: "#e3f0ff", prereq: ["planeamiento"] },
+      { id: "contabilidad", nombre: "🧠 Contabilidad Gubernamental", color: "#e3f0ff", prereq: ["gestionfin"] },
+      { id: "gestionpersonas", nombre: "🧠 Gestión de Personas", color: "#e3f0ff", prereq: ["diseñoorg"] },
+      { id: "gestionproy", nombre: "🧠 Gestión de Proyectos", color: "#e3f0ff", prereq: ["planeamiento"] },
+      { id: "electivo1", nombre: "📈 Electivo I", color: "#fdebd0", prereq: [] },
+      { id: "analisisempirico", nombre: "📈 Análisis Empírico de Políticas", color: "#fdebd0", prereq: ["metodocuanti", "metodocuali"] },
+      { id: "electivo2", nombre: "📈 Electivo II", color: "#fdebd0", prereq: ["electivo1"] },
+      { id: "electivo3", nombre: "📈 Electivo III", color: "#fdebd0", prereq: ["electivo2"] },
+      { id: "cfg", nombre: "📈 Curso de Formación General", color: "#fdebd0", prereq: [] },
+      { id: "asesoria", nombre: "💼 Simulación de Asesoría Política", color: "#dcd6f7", prereq: ["gestionproy"] },
+      { id: "practica", nombre: "🎓 Práctica Profesional", color: "#fff0f0", prereq: ["polpublica"] },
+      { id: "examen", nombre: "🎓 Examen de Título", color: "#fff0f0", prereq: ["analisisempirico"] },
+    ];
+
+    function crearMalla() {
+      const container = document.getElementById("malla");
+      container.innerHTML = "";
+      ramos.forEach(ramo => {
+        const div = document.createElement("div");
+        div.className = "ramo locked";
+        div.id = ramo.id;
+        div.style.backgroundColor = ramo.color;
+        div.innerHTML = `<strong>${ramo.nombre}</strong>`;
+        div.onclick = () => toggleAprobado(ramo.id);
+        container.appendChild(div);
+      });
+      actualizarMalla();
+    }
+
+    function toggleAprobado(id) {
+      const div = document.getElementById(id);
+      div.classList.toggle("approved");
+      actualizarMalla();
+      guardarEstado(auth.currentUser.uid);
+    }
+
+    function actualizarMalla() {
+      ramos.forEach(ramo => {
+        const div = document.getElementById(ramo.id);
+        const aprobado = div.classList.contains("approved");
+        if (aprobado) {
+          div.classList.remove("locked");
+        } else {
+          const prereqOk = ramo.prereq.every(p => document.getElementById(p).classList.contains("approved"));
+          if (prereqOk) div.classList.remove("locked");
+          else div.classList.add("locked");
+        }
+      });
+    }
+
+    // Guarda estado en Firestore bajo el UID del usuario
+    function guardarEstado(uid) {
+      const estado = {};
+      ramos.forEach(ramo => {
+        estado[ramo.id] = document.getElementById(ramo.id).classList.contains("approved");
+      });
+      db.collection("usuarios").doc(uid).set({ ramos: estado })
+        .catch(e => console.error("Error guardando estado:", e));
+    }
+
+    // Carga estado de Firestore
+    function cargarEstado(uid) {
+      db.collection("usuarios").doc(uid).get()
+        .then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            if (data.ramos) {
+              ramos.forEach(ramo => {
+                const div = document.getElementById(ramo.id);
+                if (data.ramos[ramo.id]) div.classList.add("approved");
+                else div.classList.remove("approved");
+              });
+            }
+          }
+          crearMalla();
+        })
+        .catch(e => {
+          console.error("Error cargando estado:", e);
+          crearMalla();
+        });
+    }
+  </script>
 </body>
 </html>
