@@ -48,3 +48,34 @@
   <script src="script.js"></script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Malla Administración Pública UChile - Interactiva</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🎓 Malla Interactiva Administración Pública - Universidad de Chile</h1>
+    <p>Toque los ramos para marcar aprobación. Los prerrequisitos se activan automáticamente.</p>
+  </header>
+
+  <section id="login">
+    <input type="email" id="email" placeholder="Correo UChile" />
+    <input type="password" id="password" placeholder="Contraseña" />
+    <button onclick="login()">Ingresar</button>
+    <button onclick="crearCuenta()">Crear cuenta</button>
+  </section>
+
+  <main id="malla"></main>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+  <script>
+    // Configura aquí tus datos de Firebase
