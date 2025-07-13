@@ -104,23 +104,18 @@ header p {
   flex-grow: 1;
   padding: 8px 12px;
   font-size: 1rem;
-  border-radius: 6px;
-  border: 1.5px solid #ccc;
-  transition: border-color 0.3s ease;
-}
-
-#login input:focus {
-  border-color: #0d6efd;
-  outline: none;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline-color: #0d6efd;
 }
 
 #login button {
   padding: 8px 16px;
   background-color: #0d6efd;
-  border: none;
   color: white;
   font-weight: 700;
-  border-radius: 6px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
