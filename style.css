@@ -1,116 +1,34 @@
-/* Contenedor principal */
-#malla {
-  max-width: 900px;
-  margin: 20px auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  padding: 0 15px;
+body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fdf6f0;
+  margin: 0;
+  padding: 20px;
+  color: #222;
 }
 
-/* Cada ramo */
-.ramo {
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#login {
+  max-width: 320px;
+  margin: 0 auto 20px auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 100px;
-  color: #222;
-  font-weight: 600;
-  user-select: none;
-  border: 3px solid transparent;
-}
-
-/* Hover para ramos desbloqueados */
-.ramo:not(.locked):hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-  border-color: #007bff;
-}
-
-/* Estado aprobado */
-.ramo.approved {
-  border-color: #0d6efd;
-  background-color: #d0e6ff !important;
-  box-shadow: 0 0 12px #0d6efd88;
-  color: #0b3d91;
-}
-
-/* Estado bloqueado */
-.ramo.locked {
-  opacity: 0.4;
-  pointer-events: none;
-  cursor: not-allowed;
-  filter: grayscale(50%);
-}
-
-/* Botón */
-.ramo button {
-  margin-top: 10px;
-  background-color: #0d6efd;
-  color: white;
-  font-weight: 700;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 0.9rem;
-}
-
-.ramo button:hover:not(:disabled) {
-  background-color: #084cd9;
-}
-
-.ramo button:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
-
-/* Header */
-header {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 0 15px;
-  text-align: center;
-}
-
-header h1 {
-  font-weight: 900;
-  margin-bottom: 10px;
-  color: #0d6efd;
-}
-
-header p {
-  font-weight: 500;
-  color: #555;
-}
-
-/* Login */
-#login {
-  max-width: 400px;
-  margin: 20px auto 40px;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
+  gap: 8px;
 }
 
 #login input {
-  flex-grow: 1;
-  padding: 8px 12px;
+  padding: 10px;
   font-size: 1rem;
-  border-radius: 8px;
   border: 1px solid #ccc;
+  border-radius: 8px;
   outline-color: #0d6efd;
 }
 
 #login button {
-  padding: 8px 16px;
+  padding: 10px;
   background-color: #0d6efd;
   color: white;
   font-weight: 700;
@@ -122,4 +40,40 @@ header p {
 
 #login button:hover {
   background-color: #084cd9;
+}
+
+#logoutBtn {
+  margin-top: 10px;
+}
+
+#malla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ramo {
+  padding: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease, transform 0.15s ease;
+}
+
+.ramo:hover {
+  box-shadow: 0 0 15px rgba(0,0,0,0.25);
+  transform: translateY(-3px);
+}
+
+.ramo.locked {
+  filter: grayscale(70%);
+  cursor: not-allowed;
+}
+
+.ramo.approved {
+  border: 3px solid #0d6efd;
+  box-shadow: 0 0 12px #0d6efd;
 }
