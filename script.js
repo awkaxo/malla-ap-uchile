@@ -44,22 +44,31 @@ function crearMalla() {
     container.innerHTML = ""; // limpia por si recarga
     ramos.forEach(ramo => {
         const div = document.createElement("div");
-        div.className = "ramo locked";
+        div.className = "ramo";
         div.id = ramo.id;
         div.style.backgroundColor = ramo.color;
+
+        // Chequear si está bloqueado por prerequisitos
+        const puedeTomar = ramo.prereq.every(p => {
+            const prereqDiv = document.getElementById(p);
+            return prereqDiv && prereqDiv.classList.contains("approved");
+        });
+        if (!puedeTomar && ramo.prereq.length > 0) {
+            div.classList.add("locked");
+        }
+
         div.innerHTML = `
             <strong>${ramo.nombre}</strong><br>
-            <button onclick="marcarRamo('${ramo.id}')">Aprobar</button>
+            <button ${div.classList.contains("locked") ? "disabled" : ""} onclick="marcarRamo('${ramo.id}')">Aprobar</button>
         `;
         container.appendChild(div);
     });
     actualizarMalla();
 }
 
-// Función que se llama desde firebase-login.js
 function marcarRamo(id) {
     const div = document.getElementById(id);
-    if (!div) return;
+    if (!div || div.classList.contains("locked")) return;
 
     if (div.classList.contains("approved")) {
         div.classList.remove("approved");
@@ -69,44 +78,10 @@ function marcarRamo(id) {
 
     actualizarMalla();
 
-    // Llama a firebase-login.js para guardar el cambio
     if (typeof guardarRamos === "function") {
-        // actualizar la lista en firebase-login.js
         if (div.classList.contains("approved")) {
             if (!ramosSeleccionados.includes(id)) ramosSeleccionados.push(id);
         } else {
             const index = ramosSeleccionados.indexOf(id);
             if (index > -1) ramosSeleccionados.splice(index, 1);
-        }
-        guardarRamos();
-    }
-}
-
-function actualizarMalla() {
-    ramos.forEach(ramo => {
-        const div = document.getElementById(ramo.id);
-        if (!div) return;
-        const aprobado = div.classList.contains("approved");
-        if (aprobado) {
-            div.classList.remove("locked");
-        } else {
-            const requisitosCumplidos = ramo.prereq.every(
-                pre => document.getElementById(pre)?.classList.contains("approved")
-            );
-            if (requisitosCumplidos) {
-                div.classList.remove("locked");
-            } else {
-                div.classList.add("locked");
-            }
-        }
-    });
-}
-
-window.onload = () => {
-    crearMalla();
-
-    // Esperar que firebase-login cargue y cargue ramos guardados:
-    if (typeof cargarRamos === "function") {
-        cargarRamos();
-    }
-};
+       
