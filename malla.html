@@ -127,6 +127,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
+    // Configuración Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
       authDomain: "malla-interactiva-ap.firebaseapp.com",
@@ -184,7 +185,6 @@
     let creditos = 0;
     let userEmail = null;
 
-    // Mostrar mensaje de desbloqueo por 2 segundos
     function mostrarMensajeDesbloqueo() {
       const mensaje = document.getElementById("mensaje-desbloqueo");
       mensaje.style.display = "block";
@@ -197,18 +197,23 @@
       }, 2000);
     }
 
-    // Guarda progreso en localStorage con key personalizada por usuario
     function guardarProgreso() {
-      if (!userEmail) return;
+      if (!userEmail) {
+        console.log("No hay usuario para guardar progreso");
+        return;
+      }
       const key = "malla-" + userEmail.toLowerCase();
-      const data = cursos.map(c => ({nombre: c.nombre, aprobado: c.aprobado || false}));
+      const data = cursos.map(c => ({ nombre: c.nombre, aprobado: c.aprobado || false }));
       localStorage.setItem(key, JSON.stringify(data));
       localStorage.setItem(key + "-creditos", creditos);
+      console.log("Guardando progreso para", userEmail, data, creditos);
     }
 
-    // Carga progreso guardado y marca cursos aprobados
     function cargarProgreso() {
-      if (!userEmail) return;
+      if (!userEmail) {
+        console.log("No hay usuario para cargar progreso");
+        return;
+      }
       const key = "malla-" + userEmail.toLowerCase();
       const saved = localStorage.getItem(key);
       const savedCreditos = localStorage.getItem(key + "-creditos");
@@ -218,18 +223,17 @@
           const guardado = data.find(d => d.nombre === curso.nombre);
           curso.aprobado = guardado ? guardado.aprobado : false;
         });
+        console.log("Cargando progreso para", userEmail, data);
       }
       creditos = savedCreditos ? parseInt(savedCreditos) : 0;
       document.getElementById("creditos").textContent = `Créditos Aprobados: ${creditos}`;
     }
 
-    // Actualiza la vista de cursos y su estado
     function actualizarCursos() {
       const container = document.getElementById("cursos-container");
       container.innerHTML = "";
 
       cursos.forEach(curso => {
-        // Verifica si cumple con todos los prerrequisitos aprobados
         const desbloqueado = curso.prerrequisitos.every(pr =>
           cursos.find(c => c.nombre === pr)?.aprobado
         );
@@ -255,14 +259,13 @@
       });
     }
 
-    // Control autenticación y carga
     auth.onAuthStateChanged(user => {
       if (!user) {
-        // No hay usuario, vuelve a login
         window.location.href = "index.html";
         return;
       }
       userEmail = user.email;
+      console.log("Usuario conectado:", userEmail);
       cargarProgreso();
       actualizarCursos();
     });
