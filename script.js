@@ -1,4 +1,3 @@
-// script.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getAuth,
@@ -8,9 +7,8 @@ import {
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// 🔥 Reemplaza estos datos con los de tu proyecto en Firebase
+// 🔐 Configuración real de tu Firebase (pública y segura para frontend)
 const firebaseConfig = {
- const firebaseConfig = {
   apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
   authDomain: "malla-interactiva-ap.firebaseapp.com",
   projectId: "malla-interactiva-ap",
@@ -19,11 +17,12 @@ const firebaseConfig = {
   appId: "1:982790383608:web:5c851cc78a9169c7df580d",
   measurementId: "G-PDS3Z2T8JE"
 };
-};
 
+// 🚀 Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+// 🌷 Renderizar la app
 const appDiv = document.getElementById("app");
 
 function renderLogin() {
@@ -63,7 +62,7 @@ function renderApp() {
       <button id="logout">Cerrar sesión</button>
     </div>
     <footer>
-      Hecho con 💖 por Awka – 2025
+      Hecho con 💖 por estudiantes de Administración Pública – UChile 2025
     </footer>
   `;
 
@@ -72,6 +71,7 @@ function renderApp() {
   };
 }
 
+// 🔄 Mostrar login o app según si hay sesión activa
 onAuthStateChanged(auth, (user) => {
   if (user) {
     renderApp();
