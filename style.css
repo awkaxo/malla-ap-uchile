@@ -17,29 +17,6 @@ header {
   border-radius: 0 0 12px 12px;
 }
 
-.tabs {
-  display: flex;
-  justify-content: center;
-  margin: 20px;
-  flex-wrap: wrap;
-}
-
-.tab {
-  background-color: #f9eaff;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 10px 20px;
-  margin: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.tab:hover,
-.tab.active {
-  background-color: #d8b4f8;
-  color: white;
-}
-
 #contenedor-cursos {
   padding: 20px;
   max-width: 900px;
@@ -61,6 +38,14 @@ header {
 .semestre h3 {
   margin-top: 0;
   color: #6a1b9a;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  text-align: left;
+  padding-left: 10px;
+  background-color: #f3d1ff;
+  border-radius: 8px;
+  display: inline-block;
+  padding: 5px 12px;
 }
 
 .curso {
@@ -112,4 +97,12 @@ input[type="checkbox"] {
   transition: opacity 0.5s ease;
   font-weight: bold;
   font-size: 1rem;
+}
+
+/* Ocultar tabs */
+.tabs {
+  display: none;
+}
+.tab {
+  display: none;
 }
