@@ -1,10 +1,20 @@
+// script.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+// 🔥 Reemplaza estos datos con los de tu proyecto en Firebase
 const firebaseConfig = {
   apiKey: "TU_API_KEY",
   authDomain: "TU_AUTH_DOMAIN",
   projectId: "TU_PROJECT_ID",
+  storageBucket: "TU_STORAGE_BUCKET",
+  messagingSenderId: "TU_SENDER_ID",
   appId: "TU_APP_ID",
 };
 
@@ -16,7 +26,7 @@ const appDiv = document.getElementById("app");
 function renderLogin() {
   appDiv.innerHTML = `
     <div class="card">
-      <h2>✨ Malla Diplomática</h2>
+      <h2>✨ Malla Interactiva</h2>
       <input type="email" id="email" placeholder="Correo electrónico" />
       <input type="password" id="password" placeholder="Contraseña" />
       <button id="login">Entrar</button>
@@ -59,7 +69,10 @@ function renderApp() {
   };
 }
 
-auth.onAuthStateChanged((user) => {
-  if (user) renderApp();
-  else renderLogin();
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    renderApp();
+  } else {
+    renderLogin();
+  }
 });
