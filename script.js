@@ -1,10 +1,25 @@
 // script.js
 
+// Configura aquí tu Firebase con tus credenciales reales:
+const firebaseConfig = {
+  apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
+  authDomain: "malla-interactiva-ap.firebaseapp.com",
+  projectId: "malla-interactiva-ap",
+  storageBucket: "malla-interactiva-ap.firebasestorage.app",
+  messagingSenderId: "982790383608",
+  appId: "1:982790383608:web:510c77b93144b747df580d",
+  measurementId: "G-9BE0JCRJME"
+  };
+
+// Inicializa Firebase con compatibilidad
+firebase.initializeApp(firebaseConfig);
+
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
+    document.getElementById("user-info").innerText = `Sesión iniciada como: ${user.email}`;
     iniciarMalla(user.uid);
   } else {
-    window.location.href = "index.html";
+    window.location.href = "index.html"; // Redirige si no está logueado
   }
 });
 
@@ -12,24 +27,15 @@ function iniciarMalla(usuarioId) {
   const creditosSpan = document.getElementById("creditos");
   const mensajeDesbloqueo = document.getElementById("mensaje-desbloqueo");
 
+  // Lista de cursos ejemplo — agrega todos los que quieras
   const cursos = [
     { nombre: "Matemática para la Gestión I", prerequisitos: [], creditos: 5, semestre: "I" },
     { nombre: "Introducción a la Gestión Pública", prerequisitos: [], creditos: 8, semestre: "I" },
     { nombre: "Historia de las Instituciones Políticas y Administrativas de Chile", prerequisitos: [], creditos: 5, semestre: "I" },
-    { nombre: "Tecnologías y Sistemas de Información", prerequisitos: [], creditos: 3, semestre: "I" },
-    { nombre: "Bases Jurídicas para la Administración del Estado", prerequisitos: [], creditos: 5, semestre: "I" },
-    { nombre: "Inglés I", prerequisitos: [], creditos: 3, semestre: "I" },
-    { nombre: "Curso Libre", prerequisitos: [], creditos: 2, semestre: "I" },
-
-    { nombre: "Matemática para la Gestión II", prerequisitos: ["Matemática para la Gestión I"], creditos: 5, semestre: "II" },
-    { nombre: "Evolución y Complejidad de la Administración Pública", prerequisitos: ["Introducción a la Gestión Pública"], creditos: 6, semestre: "II" },
-    { nombre: "Ideas y Debates Políticos Contemporáneos", prerequisitos: ["Historia de las Instituciones Políticas y Administrativas de Chile"], creditos: 5, semestre: "II" },
-    { nombre: "Epistemología de las Ciencias Sociales", prerequisitos: [], creditos: 5, semestre: "II" },
-    { nombre: "Marco Normativo para la Acción Administrativa I", prerequisitos: ["Bases Jurídicas para la Administración del Estado"], creditos: 5, semestre: "II" },
-    { nombre: "Inglés II", prerequisitos: ["Inglés I"], creditos: 3, semestre: "II" }
-    // Sigue con todos tus cursos aquí
+    // Continúa con todos tus cursos aquí ...
   ];
 
+  // Carga aprobados desde localStorage
   let cursosAprobados = JSON.parse(localStorage.getItem(`aprobados_${usuarioId}`)) || [];
 
   function guardarProgreso() {
@@ -48,7 +54,7 @@ function iniciarMalla(usuarioId) {
     tarjeta.innerHTML = `
       <h3>${curso.nombre}</h3>
       <p><strong>Créditos:</strong> ${curso.creditos}</p>
-      <p><strong>Prerequisitos:</strong> ${curso.prerequisitos.join(", ") || "—"}</p>
+      <p><strong>Prerequisitos:</strong> ${curso.prerequisitos.length > 0 ? curso.prerequisitos.join(", ") : "—"}</p>
       <button ${!desbloqueado ? "disabled" : ""}>
         ${cursosAprobados.includes(curso.nombre) ? "Aprobado ✅" : "Marcar como aprobado"}
       </button>
@@ -76,7 +82,12 @@ function iniciarMalla(usuarioId) {
   }
 
   function render() {
-    document.querySelectorAll(".semestre").forEach(s => (s.innerHTML = s.querySelector("h2").outerHTML));
+    // Limpia cada semestre, pero deja el título h2 intacto
+    document.querySelectorAll(".semestre").forEach(s => {
+      const titulo = s.querySelector("h2");
+      s.innerHTML = "";
+      if (titulo) s.appendChild(titulo);
+    });
     cursos.forEach(crearTarjetaCurso);
     calcularCreditos();
   }
