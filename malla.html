@@ -1,52 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Malla Interactiva</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    ✨ Malla Interactiva - Administración Pública 🌸<br>
-    <span style="font-size: 1rem; display: block; margin-top: 5px;">modo apecito activado (｡•̀ᴗ-)✧</span>
-  </header>
+  <h1>Malla Interactiva</h1>
+  <p id="creditos">Créditos aprobados: 0</p>
+  <div id="mensaje-desbloqueo" style="display:none; font-size: 1.2em; color: #5a9;">🌸 Curso desbloqueado con éxito (＾▽＾) 💫</div>
 
-  <div id="creditos">Créditos aprobados: 0</div>
-  <div id="mensaje-desbloqueo">Curso desbloqueado 🎉</div>
+  <div class="semestre" data-semestre="I">
+    <h2>Semestre I 🍃</h2>
+  </div>
+  <div class="semestre" data-semestre="II">
+    <h2>Semestre II 🌱</h2>
+  </div>
+  <div class="semestre" data-semestre="III">
+    <h2>Semestre III 🌸</h2>
+  </div>
+  <div class="semestre" data-semestre="IV">
+    <h2>Semestre IV 🌼</h2>
+  </div>
+  <div class="semestre" data-semestre="V">
+    <h2>Semestre V 🌷</h2>
+  </div>
+  <div class="semestre" data-semestre="VI">
+    <h2>Semestre VI 🌻</h2>
+  </div>
+  <div class="semestre" data-semestre="VII">
+    <h2>Semestre VII 🌺</h2>
+  </div>
+  <div class="semestre" data-semestre="VIII">
+    <h2>Semestre VIII 🌹</h2>
+  </div>
+  <div class="semestre" data-semestre="IX">
+    <h2>Semestre IX 🌼</h2>
+  </div>
+  <div class="semestre" data-semestre="X">
+    <h2>Semestre X 🌸</h2>
+  </div>
 
-  <section>
-    <h2>📘 Primer año - Semestre I</h2>
-    <div class="semestre" data-semestre="I"></div>
+  <button onclick="firebase.auth().signOut()">Cerrar sesión</button>
 
-    <h2>📗 Primer año - Semestre II</h2>
-    <div class="semestre" data-semestre="II"></div>
-
-    <h2>📙 Segundo año - Semestre III</h2>
-    <div class="semestre" data-semestre="III"></div>
-
-    <h2>📕 Segundo año - Semestre IV</h2>
-    <div class="semestre" data-semestre="IV"></div>
-
-    <h2>📒 Tercer año - Semestre V</h2>
-    <div class="semestre" data-semestre="V"></div>
-
-    <h2>📔 Tercer año - Semestre VI</h2>
-    <div class="semestre" data-semestre="VI"></div>
-
-    <h2>📓 Cuarto año - Semestre VII</h2>
-    <div class="semestre" data-semestre="VII"></div>
-
-    <h2>📚 Cuarto año - Semestre VIII</h2>
-    <div class="semestre" data-semestre="VIII"></div>
-
-    <h2>📖 Quinto año - Semestre IX</h2>
-    <div class="semestre" data-semestre="IX"></div>
-
-    <h2>🎓 Quinto año - Semestre X</h2>
-    <div class="semestre" data-semestre="X"></div>
-  </section>
-
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
