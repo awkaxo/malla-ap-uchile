@@ -118,7 +118,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
-    // Configuración Firebase (revisa que sea igual que en consola)
+    // Configuración Firebase (pon tu configuración correcta aquí)
     const firebaseConfig = {
       apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
       authDomain: "malla-interactiva-ap.firebaseapp.com",
@@ -129,6 +129,7 @@
       measurementId: "G-D8F2168ZB3"
     };
 
+    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
@@ -227,7 +228,13 @@
     });
 
     document.getElementById("logout-btn").addEventListener("click", () => {
-      auth.signOut();
+      auth.signOut()
+      .then(() => {
+        window.location.href = "index.html";
+      })
+      .catch(err => {
+        alert("Error cerrando sesión: " + err.message);
+      });
     });
   </script>
 </body>
