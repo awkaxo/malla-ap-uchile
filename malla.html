@@ -3,193 +3,72 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Malla Curricular con Login Firebase</title>
+  <title>Malla Curricular Interactiva</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Arial, sans-serif;
       max-width: 900px;
       margin: 20px auto;
-      padding: 15px;
-      background: #f9f6f2;
-      color: #4a4a4a;
+      padding: 10px;
+      background: #fafafa;
     }
-    h1, h2 {
+    h1 {
       text-align: center;
-      color: #7a6f9b;
-    }
-    form {
-      background: #d7c9e3;
-      max-width: 400px;
-      margin: 15px auto;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 3px 6px rgba(122,111,155,0.3);
-      color: #3d335c;
-    }
-    input {
-      width: 90%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: 1px solid #a99fcf;
-      font-size: 1em;
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-    input:focus {
-      border-color: #6a5d8f;
-    }
-    button {
-      background: #a7c7e7;
-      color: #244e7e;
-      border: none;
-      padding: 12px 25px;
-      font-weight: 700;
-      border-radius: 12px;
-      cursor: pointer;
-      width: 100%;
-      font-size: 1.1em;
-      box-shadow: 0 4px 8px rgba(39,82,129,0.3);
-      transition: background-color 0.3s ease;
-      margin-top: 15px;
-    }
-    button:hover {
-      background: #7b9fd3;
-    }
-    #message {
-      text-align: center;
-      margin-top: 10px;
-      font-weight: 600;
-      min-height: 22px;
-      color: #6a5d8f;
-    }
-    #dashboard {
-      max-width: 900px;
-      margin: 20px auto;
-      background: #d7c9e3;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(122,111,155,0.3);
-      display: none;
-      color: #3d335c;
     }
     #creditos {
-      font-weight: 700;
-      font-size: 1.3em;
+      font-weight: bold;
       margin-bottom: 20px;
-      text-align: center;
-      color: #6a5d8f;
+      font-size: 1.2em;
     }
     .curso {
       display: inline-block;
-      width: 250px;
-      background: #eee3f5;
-      margin: 8px;
-      padding: 14px 18px;
-      border-radius: 12px;
+      background: #ddd;
+      margin: 6px;
+      padding: 10px 15px;
+      border-radius: 6px;
       cursor: pointer;
       user-select: none;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: background-color 0.3s ease;
+      width: 250px;
       box-sizing: border-box;
-      color: #5a4899;
-      font-weight: 600;
-      box-shadow: 0 3px 6px rgba(122,111,155,0.2);
     }
     .curso.aprobado {
-      background: #a7c7e7;
-      color: #244e7e;
+      background: #4caf50;
+      color: white;
       cursor: default;
       text-decoration: line-through;
-      box-shadow: 0 4px 8px rgba(39,82,129,0.3);
     }
     .curso.bloqueado {
-      background: #f3edf9;
-      color: #b1a3d0;
-      cursor: default;
-      box-shadow: none;
+      background: #bbb;
+      color: #666;
+      cursor: not-allowed;
     }
     .curso:hover:not(.bloqueado):not(.aprobado) {
-      background: #c6b9dc;
-      color: #372f58;
-      box-shadow: 0 5px 10px rgba(122,111,155,0.4);
+      background: #a3d2f2;
     }
-    #logout-btn {
-      display: block;
-      margin: 30px auto 0 auto;
-      background: #d6c1eb;
-      color: #5a4899;
+    #reset-btn {
+      margin-top: 30px;
+      background: #cc0000;
+      color: white;
       border: none;
-      padding: 12px 28px;
-      border-radius: 14px;
+      padding: 10px 20px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 1.1em;
-      font-weight: 700;
-      box-shadow: 0 3px 7px rgba(90,72,153,0.4);
-      transition: background-color 0.3s ease;
+      font-size: 1em;
     }
-    #logout-btn:hover {
-      background: #bfa2db;
-      color: #4a3a87;
+    #reset-btn:hover {
+      background: #990000;
     }
   </style>
 </head>
 <body>
 
-  <h1>Malla Curricular Administración Pública</h1>
-
-  <div id="auth-container">
-    <h2>Crear Cuenta</h2>
-    <form id="register-form">
-      <input type="email" id="register-email" placeholder="Email" required />
-      <input type="password" id="register-password" placeholder="Contraseña (mín. 6 caracteres)" required minlength="6" />
-      <button type="submit">Crear Cuenta</button>
-    </form>
-
-    <h2>Iniciar Sesión</h2>
-    <form id="login-form">
-      <input type="email" id="login-email" placeholder="Email" required />
-      <input type="password" id="login-password" placeholder="Contraseña" required minlength="6" />
-      <button type="submit">Iniciar Sesión</button>
-    </form>
-
-    <div id="message"></div>
-  </div>
-
-  <div id="dashboard">
-    <div id="creditos">Créditos Aprobados: 0</div>
-    <div id="cursos-container"></div>
-    <button id="logout-btn">Cerrar Sesión</button>
-  </div>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <h1>Malla Curricular - Administración Pública</h1>
+  <div id="creditos">Créditos Aprobados: 0</div>
+  <div id="cursos-container"></div>
+  <button id="reset-btn">Reiniciar Progreso</button>
 
   <script>
-    // Aquí pones tu configuración de Firebase
-    const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_PROYECTO.firebaseapp.com",
-      projectId: "TU_PROYECTO",
-      storageBucket: "TU_PROYECTO.appspot.com",
-      messagingSenderId: "TU_MESSAGING_ID",
-      appId: "TU_APP_ID"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // DOM Elements
-    const authContainer = document.getElementById("auth-container");
-    const registerForm = document.getElementById("register-form");
-    const loginForm = document.getElementById("login-form");
-    const messageDiv = document.getElementById("message");
-    const dashboard = document.getElementById("dashboard");
-    const cursosContainer = document.getElementById("cursos-container");
-    const creditosDiv = document.getElementById("creditos");
-    const logoutBtn = document.getElementById("logout-btn");
-
-    // Cursos y prerrequisitos
     const cursos = [
       { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
       { nombre: "Introducción a la Gestión Pública", prerrequisitos: [], creditos: 8 },
@@ -231,34 +110,19 @@
       { nombre: "Examen de Título", prerrequisitos: ["Análisis Empírico de Políticas"], creditos: 12 }
     ];
 
-    // Estado guardado: aprobado por usuario (cursos aprobados)
-    let aprobados = [];
+    const container = document.getElementById("cursos-container");
+    const creditosDiv = document.getElementById("creditos");
+    const resetBtn = document.getElementById("reset-btn");
 
-    // Mostrar mensajes
-    function showMessage(text, error = false) {
-      messageDiv.textContent = text;
-      messageDiv.style.color = error ? "crimson" : "#6a5d8f";
-    }
+    let aprobados = JSON.parse(localStorage.getItem("aprobados")) || [];
 
-    // Guarda el progreso de los cursos aprobados en localStorage por usuario
-    function guardarEstado(uid) {
-      localStorage.setItem("malla_aprobados_" + uid, JSON.stringify(aprobados));
-    }
-    // Carga el progreso guardado
-    function cargarEstado(uid) {
-      const data = localStorage.getItem("malla_aprobados_" + uid);
-      aprobados = data ? JSON.parse(data) : [];
-    }
-
-    // Función para ver si un curso puede activarse (prerrequisitos aprobados)
     function puedeActivar(curso) {
       if (curso.prerrequisitos.length === 0) return true;
-      return curso.prerrequisitos.every(p => aprobados.includes(p));
+      return curso.prerrequisitos.every(prerreq => aprobados.includes(prerreq));
     }
 
-    // Renderiza la malla de cursos
-    function renderizarMalla() {
-      cursosContainer.innerHTML = "";
+    function actualizarUI() {
+      container.innerHTML = "";
       let totalCreditos = 0;
 
       cursos.forEach(curso => {
@@ -273,4 +137,34 @@
         }
 
         div.textContent = curso.nombre + " (" + curso.creditos + " créditos)";
-        div
+        div.title = "Prerrequisitos: " + (curso.prerrequisitos.length > 0 ? curso.prerrequisitos.join(", ") : "Ninguno");
+
+        if (!aprobados.includes(curso.nombre) && puedeActivar(curso)) {
+          div.addEventListener("click", () => {
+            aprobados.push(curso.nombre);
+            guardarEstado();
+            actualizarUI();
+          });
+        }
+
+        container.appendChild(div);
+      });
+
+      creditosDiv.textContent = "Créditos Aprobados: " + totalCreditos;
+    }
+
+    function guardarEstado() {
+      localStorage.setItem("aprobados", JSON.stringify(aprobados));
+    }
+
+    resetBtn.addEventListener("click", () => {
+      aprobados = [];
+      guardarEstado();
+      actualizarUI();
+    });
+
+    actualizarUI();
+  </script>
+
+</body>
+</html>
