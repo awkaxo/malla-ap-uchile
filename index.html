@@ -4,7 +4,163 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Malla Interactiva AP UChile - Login y Registro</title>
-<link rel="stylesheet" href="style.css" />
+<style>
+  /* Estilos integrados */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body {
+    background: linear-gradient(135deg, #f5f7ff, #e3e9ff);
+    min-height: 100vh;
+    color: #3b2a5f;
+    padding: 1rem;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: #4b367c;
+    text-shadow: 1px 1px 3px rgba(255 255 255 / 0.8);
+  }
+  header p {
+    color: #6b5ca5;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  .auth-container {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+  }
+  .auth-box {
+    background: #fff;
+    padding: 1.8rem 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(114, 85, 145, 0.15);
+    width: 280px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  .auth-box:hover {
+    transform: translateY(-6px);
+  }
+  .auth-box h2 {
+    margin-bottom: 1rem;
+    color: #5b3e9e;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 1.4rem;
+  }
+  .auth-box input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    margin: 0.5rem 0 1rem 0;
+    border-radius: 12px;
+    border: 1.8px solid #cdb9e8;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  .auth-box input:focus {
+    outline: none;
+    border-color: #7e57c2;
+    box-shadow: 0 0 6px #9575cd88;
+  }
+  .auth-box button {
+    background: #7e57c2;
+    color: white;
+    border: none;
+    padding: 0.65rem 1.4rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+    font-size: 1.1rem;
+  }
+  .auth-box button:hover {
+    background: #955ad9;
+  }
+  #malla {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    padding-bottom: 2rem;
+  }
+  .ramo {
+    background: white;
+    border-radius: 14px;
+    padding: 1.2rem 1rem;
+    width: 210px;
+    text-align: center;
+    box-shadow: 0 6px 14px rgba(121, 95, 178, 0.15);
+    cursor: pointer;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    border: 2px solid transparent;
+    font-weight: 600;
+    user-select: none;
+  }
+  .ramo:hover {
+    box-shadow: 0 8px 24px rgba(121, 95, 178, 0.3);
+    transform: translateY(-5px);
+  }
+  .ramo.locked {
+    opacity: 0.45;
+    pointer-events: none;
+    filter: grayscale(50%);
+    cursor: not-allowed;
+  }
+  .ramo.approved {
+    border-color: #6a3ab6;
+    background: #ede5fa;
+    color: #4b367c;
+    box-shadow: 0 6px 14px rgba(110, 76, 169, 0.4);
+  }
+  .ramo strong {
+    display: block;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+  @media (max-width: 600px) {
+    .auth-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    .auth-box {
+      width: 90vw;
+    }
+    #malla {
+      gap: 0.75rem;
+    }
+    .ramo {
+      width: 90vw;
+    }
+  }
+  /* Mensaje de carga */
+  #loadingMessage {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #7e57c2;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    z-index: 9999;
+    display: none;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(126, 87, 194, 0.8);
+  }
+</style>
 </head>
 <body>
 <header>
@@ -16,7 +172,7 @@
   <div class="auth-box">
     <h2>Crear Cuenta</h2>
     <input type="email" id="reg-email" placeholder="Correo electrónico" />
-    <input type="password" id="reg-password" placeholder="Contraseña (min 6 caracteres)" />
+    <input type="password" id="reg-password" placeholder="Contraseña (mín. 6 caracteres)" />
     <button id="registerBtn">Crear Cuenta</button>
   </div>
 
@@ -28,9 +184,9 @@
   </div>
 </section>
 
-<main id="malla"></main>
+<div id="loadingMessage">Cargando...</div>
 
-<script src="malla.js"></script>
+<main id="malla"></main>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -61,6 +217,8 @@
   const loginEmailInput = document.getElementById("login-email");
   const loginPassInput = document.getElementById("login-password");
 
+  let currentUserId = null;
+
   document.getElementById("registerBtn").addEventListener("click", () => {
     const email = regEmailInput.value.trim();
     const pass = regPassInput.value;
@@ -73,9 +231,10 @@
       return;
     }
     createUserWithEmailAndPassword(auth, email, pass)
-      .then((user) => {
+      .then((userCredential) => {
         alert("Cuenta creada 💖");
-        guardarEstado(user.user.uid);
+        currentUserId = userCredential.user.uid;
+        guardarEstado(currentUserId);
       })
       .catch((err) => alert("Error al crear cuenta: " + err.message));
   });
@@ -88,57 +247,167 @@
       return;
     }
     signInWithEmailAndPassword(auth, email, pass)
-      .then((user) => cargarEstado(user.user.uid))
+      .then((userCredential) => {
+        currentUserId = userCredential.user.uid;
+        mostrarMensaje("Cargando tu malla...");
+        cargarEstado(currentUserId).then(() => {
+          ocultarMensaje();
+        });
+      })
       .catch((err) => alert("Error al iniciar sesión: " + err.message));
   });
 
   onAuthStateChanged(auth, (user) => {
-    if (user) cargarEstado(user.uid);
+    if (user) {
+      currentUserId = user.uid;
+      mostrarMensaje("Cargando tu malla...");
+      cargarEstado(currentUserId).then(() => {
+        ocultarMensaje();
+      });
+    } else {
+      currentUserId = null;
+      document.getElementById("malla").innerHTML = "";
+    }
   });
 
-  async function guardarEstado(userId) {
-    const aprobados = Array.from(document.querySelectorAll(".ramo.approved")).map((div) => div.id);
-    await setDoc(doc(db, "usuarios", userId), { aprobados });
-  }
+  const ramos = [
+    { id: "mat1", nombre: "🎓 Matemática para la Gestión I", color: "#ffe0eb", prereq: [] },
+    { id: "intro", nombre: "🎓 Introducción a la Gestión Pública", color: "#ffe0eb", prereq: [] },
+    { id: "histinst", nombre: "🎓 Historia de las Instituciones Políticas de Chile", color: "#ffe0eb", prereq: [] },
+    { id: "sistemasinfo", nombre: "🎓 Tecnologías y Sistemas de Información", color: "#ffe0eb", prereq: [] },
+    { id: "basesjur", nombre: "🎓 Bases Jurídicas para la Administración del Estado", color: "#ffe0eb", prereq: [] },
+    { id: "ingles1", nombre: "🎓 Inglés I", color: "#ffe0eb", prereq: [] },
+    { id: "curso1", nombre: "🎓 Curso Libre I", color: "#ffe0eb", prereq: [] },
+    { id: "mat2", nombre: "📘 Matemática para la Gestión II", color: "#fce1ff", prereq: ["mat1"] },
+    { id: "evo", nombre: "📘 Evolución y Complejidad de la Administración Pública", color: "#fce1ff", prereq: ["intro"] },
+    { id: "ideas", nombre: "📘 Ideas y Debates Políticos Contemporáneos", color: "#fce1ff", prereq: [] },
+    { id: "epistem", nombre: "📘 Epistemología de las Ciencias Sociales", color: "#fce1ff", prereq: [] },
+    { id: "marconorm1", nombre: "📘 Marco Normativo I", color: "#fce1ff", prereq: ["basesjur"] },
+    { id: "ingles2", nombre: "📘 Inglés II", color: "#fce1ff", prereq: ["ingles1"] },
+    { id: "curso2", nombre: "📘 Curso Libre II", color: "#fce1ff", prereq: ["curso1"] },
+    { id: "estad1", nombre: "📊 Estadística para la Gestión I", color: "#d1f5f0", prereq: ["mat2"] },
+    { id: "admin", nombre: "📊 Comportamiento Humano en la Organización", color: "#d1f5f0", prereq: ["evo"] },
+    { id: "fenomenos", nombre: "📊 Fenómenos Políticos", color: "#d1f5f0", prereq: ["
+    { id: "micro", nombre: "📊 Microeconomía para la Gestión Pública", color: "#d1f5f0", prereq: ["mat2"] },
+    { id: "marconorm2", nombre: "📊 Marco Normativo II", color: "#d1f5f0", prereq: ["marconorm1"] },
+    { id: "metodocuali", nombre: "📊 Métodos Cualitativos", color: "#d1f5f0", prereq: ["epistem"] },
+    { id: "polintl", nombre: "🌍 Política Internacional", color: "#fef5d6", prereq: ["fenomenos"] },
+    { id: "diseñoorg", nombre: "🌍 Diseño Organizacional", color: "#fef5d6", prereq: ["admin"] },
+    { id: "metodocuanti", nombre: "🌍 Métodos Cuantitativos", color: "#fef5d6", prereq: ["estad1"] },
+    { id: "planeamiento", nombre: "🌍 Planeamiento Estratégico", color: "#fef5d6", prereq: ["diseñoorg"] },
+    { id: "gestionfin", nombre: "🌍 Gestión Financiera Pública", color: "#fef5d6", prereq: ["micro"] },
+    { id: "negociacion", nombre: "🧠 Negociación y Resolución de Conflictos", color: "#e3f0ff", prereq: ["admin"] },
+    { id: "polpublica", nombre: "🧠 Ciclo y Evaluación de Políticas Públicas", color: "#e3f0ff", prereq: ["planeamiento"] },
+    { id: "contabilidad", nombre: "🧠 Contabilidad Gubernamental", color: "#e3f0ff", prereq: ["gestionfin"] },
+    { id: "gestionpersonas", nombre: "🧠 Gestión de Personas", color: "#e3f0ff", prereq: ["diseñoorg"] },
+    { id: "gestionproy", nombre: "🧠 Gestión de Proyectos", color: "#e3f0ff", prereq: ["planeamiento"] },
+    { id: "electivo1", nombre: "📈 Electivo I", color: "#fdebd0", prereq: [] },
+    { id: "analisisempirico", nombre: "📈 Análisis Empírico de Políticas", color: "#fdebd0", prereq: ["metodocuanti", "metodocuali"] },
+    { id: "electivo2", nombre: "📈 Electivo II", color: "#fdebd0", prereq: ["electivo1"] },
+    { id: "electivo3", nombre: "📈 Electivo III", color: "#fdebd0", prereq: ["electivo2"] },
+    { id: "cfg", nombre: "📈 Curso de Formación General", color: "#fdebd0", prereq: [] },
+    { id: "asesoria", nombre: "💼 Simulación de Asesoría Política", color: "#dcd6f7", prereq: ["gestionproy"] },
+    { id: "practica", nombre: "🎓 Práctica Profesional", color: "#fff0f0", prereq: ["polpublica"] },
+    { id: "examen", nombre: "🎓 Examen de Título", color: "#fff0f0", prereq: ["analisisempirico"] },
+  ];
 
-  async function cargarEstado(userId) {
-    const snap = await getDoc(doc(db, "usuarios", userId));
-    const aprobados = snap.exists() ? snap.data().aprobados : [];
-    renderMalla(userId, aprobados);
-  }
-
-  function renderMalla(userId, aprobados = []) {
-    const malla = document.getElementById("malla");
-    malla.innerHTML = "";
-    ramos.forEach((r) => {
+  function crearMalla() {
+    const container = document.getElementById("malla");
+    container.innerHTML = ""; // Limpia antes de crear
+    ramos.forEach(ramo => {
       const div = document.createElement("div");
-      div.id = r.id;
-      div.className = "ramo" + (aprobados.includes(r.id) ? " approved" : "");
-      div.style.backgroundColor = r.color;
-      div.innerHTML = `<strong>${r.nombre}</strong>`;
-      div.onclick = () => {
-        div.classList.toggle("approved");
-        actualizarMalla();
-        guardarEstado(userId);
-      };
-      malla.appendChild(div);
+      div.className = "ramo locked";
+      div.id = ramo.id;
+      div.style.backgroundColor = ramo.color;
+      div.innerHTML = `<strong>${ramo.nombre}</strong>`;
+      div.addEventListener("click", () => {
+        if (!div.classList.contains("locked")) {
+          div.classList.toggle("approved");
+          actualizarMalla();
+          if(currentUserId) guardarEstado(currentUserId);
+        }
+      });
+      container.appendChild(div);
     });
     actualizarMalla();
   }
 
   function actualizarMalla() {
-    ramos.forEach((r) => {
-      const div = document.getElementById(r.id);
-      if (!div) return;
+    ramos.forEach(ramo => {
+      const div = document.getElementById(ramo.id);
       const aprobado = div.classList.contains("approved");
-      const requisitos = r.prereq.map((pr) => document.getElementById(pr)?.classList.contains("approved"));
-      if (aprobado || requisitos.every(Boolean)) {
+      if (aprobado) {
         div.classList.remove("locked");
       } else {
-        div.classList.add("locked");
+        const prereqsOk = ramo.prereq.every(pr => {
+          const prereqDiv = document.getElementById(pr);
+          return prereqDiv && prereqDiv.classList.contains("approved");
+        });
+        if (prereqsOk) {
+          div.classList.remove("locked");
+        } else {
+          div.classList.add("locked");
+          div.classList.remove("approved");
+        }
       }
     });
   }
+
+  async function guardarEstado(userId) {
+    const estado = {};
+    ramos.forEach(ramo => {
+      const div = document.getElementById(ramo.id);
+      estado[ramo.id] = div.classList.contains("approved");
+    });
+    try {
+      await setDoc(doc(db, "usuarios", userId), { estado });
+      // console.log("Estado guardado");
+    } catch (error) {
+      alert("Error guardando estado: " + error.message);
+    }
+  }
+
+  async function cargarEstado(userId) {
+    try {
+      const docRef = doc(db, "usuarios", userId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if(data.estado){
+          for (const [id, aprobado] of Object.entries(data.estado)) {
+            const div = document.getElementById(id);
+            if (div) {
+              if (aprobado) div.classList.add("approved");
+              else div.classList.remove("approved");
+            }
+          }
+          actualizarMalla();
+          return;
+        }
+      }
+      // Si no hay datos guardados
+      crearMalla();
+    } catch (error) {
+      alert("Error cargando estado: " + error.message);
+      crearMalla();
+    }
+  }
+
+  function mostrarMensaje(msg) {
+    const loading = document.getElementById("loadingMessage");
+    loading.textContent = msg;
+    loading.style.display = "block";
+  }
+
+  function ocultarMensaje() {
+    const loading = document.getElementById("loadingMessage");
+    loading.style.display = "none";
+  }
+
+  window.onload = () => {
+    crearMalla();
+  };
 </script>
+
 </body>
 </html>
