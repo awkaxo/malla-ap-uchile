@@ -3,72 +3,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Malla Curricular Interactiva</title>
+  <title>Malla Curricular - Administración Pública</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       max-width: 900px;
       margin: 20px auto;
-      padding: 10px;
-      background: #fafafa;
+      padding: 15px;
+      background: #f9f6f2;
+      color: #4a4a4a;
     }
     h1 {
       text-align: center;
+      color: #7a6f9b;
     }
     #creditos {
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 1.3em;
       margin-bottom: 20px;
-      font-size: 1.2em;
+      text-align: center;
+      color: #6a5d8f;
     }
     .curso {
       display: inline-block;
-      background: #ddd;
-      margin: 6px;
-      padding: 10px 15px;
-      border-radius: 6px;
+      width: 250px;
+      background: #eee3f5;
+      margin: 8px;
+      padding: 14px 18px;
+      border-radius: 12px;
       cursor: pointer;
       user-select: none;
-      transition: background-color 0.3s ease;
-      width: 250px;
+      transition: background-color 0.3s ease, color 0.3s ease;
       box-sizing: border-box;
+      color: #5a4899;
+      font-weight: 600;
+      box-shadow: 0 3px 6px rgba(122,111,155,0.2);
     }
     .curso.aprobado {
-      background: #4caf50;
-      color: white;
+      background: #a7c7e7;
+      color: #244e7e;
       cursor: default;
       text-decoration: line-through;
+      box-shadow: 0 4px 8px rgba(39,82,129,0.3);
     }
     .curso.bloqueado {
-      background: #bbb;
-      color: #666;
-      cursor: not-allowed;
+      background: #f3edf9;
+      color: #b1a3d0;
+      cursor: default;
+      box-shadow: none;
     }
     .curso:hover:not(.bloqueado):not(.aprobado) {
-      background: #a3d2f2;
+      background: #c6b9dc;
+      color: #372f58;
+      box-shadow: 0 5px 10px rgba(122,111,155,0.4);
     }
-    #reset-btn {
-      margin-top: 30px;
-      background: #cc0000;
-      color: white;
+    #logout-btn {
+      display: block;
+      margin: 30px auto 0 auto;
+      background: #d6c1eb;
+      color: #5a4899;
       border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
+      padding: 12px 28px;
+      border-radius: 14px;
       cursor: pointer;
-      font-size: 1em;
+      font-size: 1.1em;
+      font-weight: 700;
+      box-shadow: 0 3px 7px rgba(90,72,153,0.4);
+      transition: background-color 0.3s ease;
     }
-    #reset-btn:hover {
-      background: #990000;
+    #logout-btn:hover {
+      background: #bfa2db;
+      color: #4a3a87;
     }
   </style>
 </head>
 <body>
 
-  <h1>Malla Curricular - Administración Pública</h1>
+  <h1>Malla Curricular Administración Pública</h1>
   <div id="creditos">Créditos Aprobados: 0</div>
   <div id="cursos-container"></div>
-  <button id="reset-btn">Reiniciar Progreso</button>
+  <button id="logout-btn">Cerrar Sesión</button>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_PROYECTO.firebaseapp.com",
+      projectId: "TU_PROYECTO",
+      storageBucket: "TU_PROYECTO.appspot.com",
+      messagingSenderId: "TU_MESSAGING_ID",
+      appId: "TU_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
     const cursos = [
       { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
       { nombre: "Introducción a la Gestión Pública", prerrequisitos: [], creditos: 8 },
@@ -110,19 +142,25 @@
       { nombre: "Examen de Título", prerrequisitos: ["Análisis Empírico de Políticas"], creditos: 12 }
     ];
 
-    const container = document.getElementById("cursos-container");
-    const creditosDiv = document.getElementById("creditos");
-    const resetBtn = document.getElementById("reset-btn");
+    let aprobados = [];
 
-    let aprobados = JSON.parse(localStorage.getItem("aprobados")) || [];
+    function guardarEstado(uid) {
+      localStorage.setItem("malla_aprobados_" + uid, JSON.stringify(aprobados));
+    }
+
+    function cargarEstado(uid) {
+      const data = localStorage.getItem("malla_aprobados_" + uid);
+      aprobados = data ? JSON.parse(data) : [];
+    }
 
     function puedeActivar(curso) {
       if (curso.prerrequisitos.length === 0) return true;
-      return curso.prerrequisitos.every(prerreq => aprobados.includes(prerreq));
+      return curso.prerrequisitos.every(p => aprobados.includes(p));
     }
 
-    function actualizarUI() {
-      container.innerHTML = "";
+    function renderizarMalla() {
+      const contenedor = document.getElementById("cursos-container");
+      contenedor.innerHTML = "";
       let totalCreditos = 0;
 
       cursos.forEach(curso => {
@@ -136,34 +174,35 @@
           div.classList.add("bloqueado");
         }
 
-        div.textContent = curso.nombre + " (" + curso.creditos + " créditos)";
+        div.textContent = `${curso.nombre} (${curso.creditos} créditos)`;
         div.title = "Prerrequisitos: " + (curso.prerrequisitos.length > 0 ? curso.prerrequisitos.join(", ") : "Ninguno");
 
         if (!aprobados.includes(curso.nombre) && puedeActivar(curso)) {
           div.addEventListener("click", () => {
             aprobados.push(curso.nombre);
-            guardarEstado();
-            actualizarUI();
+            guardarEstado(auth.currentUser.uid);
+            renderizarMalla();
           });
         }
 
-        container.appendChild(div);
+        contenedor.appendChild(div);
       });
 
-      creditosDiv.textContent = "Créditos Aprobados: " + totalCreditos;
+      document.getElementById("creditos").textContent = "Créditos Aprobados: " + totalCreditos;
     }
 
-    function guardarEstado() {
-      localStorage.setItem("aprobados", JSON.stringify(aprobados));
-    }
-
-    resetBtn.addEventListener("click", () => {
-      aprobados = [];
-      guardarEstado();
-      actualizarUI();
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      auth.signOut();
     });
 
-    actualizarUI();
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        cargarEstado(user.uid);
+        renderizarMalla();
+      } else {
+        window.location.href = "index.html"; // Redirige a login si no hay usuario
+      }
+    });
   </script>
 
 </body>
