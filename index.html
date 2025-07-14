@@ -2,153 +2,122 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login - Administración Pública</title>
+  <title>Login - Malla AP</title>
   <style>
-    /* Colores pastel y estilos similares al anterior */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 450px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #f9f6f2;
-      color: #4a4a4a;
+      background: #f0e8ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      color: #4a3a87;
     }
-    h1, h2 {
-      text-align: center;
-      color: #7a6f9b;
-    }
-    form {
-      background: #d7c9e3;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 3px 6px rgba(122,111,155,0.3);
+    h1 {
       margin-bottom: 25px;
     }
     input {
-      width: 90%;
-      padding: 12px;
+      display: block;
       margin: 10px 0;
-      border-radius: 10px;
-      border: 1px solid #a99fcf;
-      font-size: 1em;
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-    input:focus {
-      border-color: #6a5d8f;
+      padding: 10px;
+      width: 280px;
+      border-radius: 8px;
+      border: 1px solid #b3a3d1;
+      font-size: 1rem;
     }
     button {
-      background: #a7c7e7;
-      color: #244e7e;
-      border: none;
-      padding: 12px 25px;
-      font-weight: 700;
-      border-radius: 12px;
-      cursor: pointer;
-      width: 100%;
-      font-size: 1.1em;
-      box-shadow: 0 4px 8px rgba(39,82,129,0.3);
-      transition: background-color 0.3s ease;
       margin-top: 15px;
+      padding: 12px 28px;
+      border: none;
+      background: #9e86d4;
+      color: white;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 300px;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
     }
     button:hover {
-      background: #7b9fd3;
+      background: #7a5dc7;
     }
-    #message {
-      text-align: center;
-      margin-top: 10px;
-      font-weight: 600;
-      min-height: 22px;
-      color: #6a5d8f;
+    #msg {
+      margin-top: 15px;
+      min-height: 20px;
     }
   </style>
 </head>
 <body>
+  <h1>Iniciar Sesión o Crear Cuenta</h1>
+  <input id="email" type="email" placeholder="Correo electrónico" />
+  <input id="password" type="password" placeholder="Contraseña" />
+  <button id="btnLogin">Iniciar Sesión</button>
+  <button id="btnRegister">Crear Cuenta</button>
+  <div id="msg"></div>
 
-  <h1>Malla Curricular Administración Pública</h1>
-
-  <div id="auth-container">
-
-    <h2>Crear Cuenta</h2>
-    <form id="register-form">
-      <input type="email" id="register-email" placeholder="Email" required />
-      <input type="password" id="register-password" placeholder="Contraseña (mín. 6 caracteres)" required minlength="6" />
-      <button type="submit">Crear Cuenta</button>
-    </form>
-
-    <h2>Iniciar Sesión</h2>
-    <form id="login-form">
-      <input type="email" id="login-email" placeholder="Email" required />
-      <input type="password" id="login-password" placeholder="Contraseña" required minlength="6" />
-      <button type="submit">Iniciar Sesión</button>
-    </form>
-
-    <div id="message"></div>
-
-  </div>
-
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-
   <script>
     const firebaseConfig = {
- apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
-  authDomain: "malla-interactiva-ap.firebaseapp.com",
-  projectId: "malla-interactiva-ap",
-  storageBucket: "malla-interactiva-ap.firebasestorage.app",
-  messagingSenderId: "982790383608",
-  appId: "1:982790383608:web:0c0100d098ba1713df580d",
-  measurementId: "G-D8F2168ZB3"
+      apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
+      authDomain: "malla-interactiva-ap.firebaseapp.com",
+      projectId: "malla-interactiva-ap",
+      storageBucket: "malla-interactiva-ap.appspot.com",
+      messagingSenderId: "982790383608",
+      appId: "1:982790383608:web:0c0100d098ba1713df580d",
+      measurementId: "G-D8F2168ZB3"
     };
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    const registerForm = document.getElementById("register-form");
-    const loginForm = document.getElementById("login-form");
-    const messageDiv = document.getElementById("message");
+    const emailInput = document.getElementById("email");
+    const passInput = document.getElementById("password");
+    const btnLogin = document.getElementById("btnLogin");
+    const btnRegister = document.getElementById("btnRegister");
+    const msgDiv = document.getElementById("msg");
 
-    function showMessage(text, error = false) {
-      messageDiv.textContent = text;
-      messageDiv.style.color = error ? "crimson" : "#6a5d8f";
-    }
-
-    registerForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const email = document.getElementById("register-email").value;
-      const password = document.getElementById("register-password").value;
-      showMessage("Creando cuenta...");
-      auth.createUserWithEmailAndPassword(email, password)
-        .then(() => {
-          showMessage("Cuenta creada. Iniciando sesión...");
+    btnLogin.addEventListener("click", () => {
+      const email = emailInput.value;
+      const password = passInput.value;
+      msgDiv.textContent = "Iniciando sesión...";
+      msgDiv.style.color = "black";
+      auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          msgDiv.textContent = "¡Sesión iniciada! Redirigiendo...";
+          window.location.href = "malla.html";
         })
-        .catch(err => {
-          showMessage("Error: " + err.message, true);
+        .catch(error => {
+          msgDiv.textContent = "Error: " + error.message;
+          msgDiv.style.color = "red";
         });
-      registerForm.reset();
     });
 
-    loginForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
-      showMessage("Iniciando sesión...");
-      auth.signInWithEmailAndPassword(email, password)
-        .catch(err => {
-          showMessage("Error: " + err.message, true);
+    btnRegister.addEventListener("click", () => {
+      const email = emailInput.value;
+      const password = passInput.value;
+      if(password.length < 6){
+        msgDiv.textContent = "La contraseña debe tener al menos 6 caracteres.";
+        msgDiv.style.color = "red";
+        return;
+      }
+      msgDiv.textContent = "Creando cuenta...";
+      msgDiv.style.color = "black";
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          msgDiv.textContent = "Cuenta creada! Redirigiendo...";
+          window.location.href = "malla.html";
+        })
+        .catch(error => {
+          msgDiv.textContent = "Error: " + error.message;
+          msgDiv.style.color = "red";
         });
-      loginForm.reset();
     });
 
     auth.onAuthStateChanged(user => {
-      if (user) {
-        // Usuario logueado, redirigir a malla.html
-        window.location.href = "malla.html?uid=" + user.uid;
+      if(user){
+        window.location.href = "malla.html";
       }
     });
   </script>
-
 </body>
 </html>
