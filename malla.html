@@ -3,24 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🌷 Malla Curricular Administración Pública 🌷</title>
+  <title>🌸 Malla Curricular Administración Pública 🌸</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Nunito', sans-serif;
       background: linear-gradient(to bottom right, #f9f6ff, #fef1ff);
       color: #5a4a7a;
-      margin: 0; padding: 20px; text-align: center;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
     }
     h1 {
-      font-size: 2em; color: #9b71c7; margin-bottom: 5px;
+      font-size: 2em;
+      color: #9b71c7;
+      margin-bottom: 5px;
     }
     h2 {
-      font-weight: normal; color: #b68cd2; font-size: 1.2em;
-      margin-top: 0; margin-bottom: 20px;
+      font-weight: normal;
+      color: #b68cd2;
+      font-size: 1.2em;
+      margin-top: 0;
+      margin-bottom: 20px;
     }
     #creditos {
-      font-weight: bold; font-size: 1.2em;
+      font-weight: bold;
+      font-size: 1.2em;
       background-color: #fbe4ff;
       display: inline-block;
       padding: 10px 18px;
@@ -110,6 +118,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
+    // Configuración Firebase (revisa que sea igual que en consola)
     const firebaseConfig = {
       apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
       authDomain: "malla-interactiva-ap.firebaseapp.com",
@@ -170,4 +179,56 @@
       const mensaje = document.getElementById("mensaje-desbloqueo");
       mensaje.style.display = "block";
       mensaje.style.opacity = "1";
-      set
+      setTimeout(() => {
+        mensaje.style.opacity = "0";
+        setTimeout(() => {
+          mensaje.style.display = "none";
+        }, 500);
+      }, 2000);
+    }
+
+    function actualizarCursos() {
+      const container = document.getElementById("cursos-container");
+      container.innerHTML = "";
+
+      cursos.forEach(curso => {
+        const tieneTodosLosPrerrequisitos = curso.prerrequisitos.every(pr => {
+          const c = cursos.find(curso2 => curso2.nombre === pr);
+          return c && c.aprobado;
+        });
+        const estado = curso.aprobado ? 'aprobado' : (tieneTodosLosPrerrequisitos ? '' : 'bloqueado');
+
+        const div = document.createElement("div");
+        div.className = `curso ${estado}`;
+        div.textContent = curso.nombre;
+
+        if (estado === '') {
+          div.addEventListener("click", () => {
+            curso.aprobado = true;
+            creditos += curso.creditos;
+            document.getElementById("creditos").textContent = `Créditos Aprobados: ${creditos}`;
+            mostrarMensajeDesbloqueo();
+            actualizarCursos();
+          });
+        }
+
+        container.appendChild(div);
+      });
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "index.html";
+      } else {
+        creditos = 0;
+        cursos.forEach(c => c.aprobado = false);
+        actualizarCursos();
+      }
+    });
+
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      auth.signOut();
+    });
+  </script>
+</body>
+</html>
