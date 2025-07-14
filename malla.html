@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Malla Curricular Interactiva</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 10px;
+      background: #fafafa;
+    }
+    h1 {
+      text-align: center;
+    }
+    #creditos {
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-size: 1.2em;
+    }
+    .curso {
+      display: inline-block;
+      background: #ddd;
+      margin: 6px;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+      width: 250px;
+      box-sizing: border-box;
+    }
+    .curso.aprobado {
+      background: #4caf50;
+      color: white;
+      cursor: default;
+      text-decoration: line-through;
+    }
+    .curso.bloqueado {
+      background: #bbb;
+      color: #666;
+      cursor: not-allowed;
+    }
+    .curso:hover:not(.bloqueado):not(.aprobado) {
+      background: #a3d2f2;
+    }
+    #reset-btn {
+      margin-top: 30px;
+      background: #cc0000;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    #reset-btn:hover {
+      background: #990000;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Malla Curricular - Administración Pública</h1>
+  <div id="creditos">Créditos Aprobados: 0</div>
+  <div id="cursos-container"></div>
+  <button id="reset-btn">Reiniciar Progreso</button>
+
+  <script>
+    const cursos = [
+      { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
+      { nombre: "Introducción a la Gestión Pública", prerrequisitos: [], creditos: 8 },
+      { nombre: "Historia de las Instituciones Políticas", prerrequisitos: [], creditos: 8 },
+      { nombre: "Tecnologías y Sistemas de Información", prerrequisitos: [], creditos: 8 },
+      { nombre: "Bases Jurídicas para la Administración", prerrequisitos: [], creditos: 8 },
+      { nombre: "Inglés I", prerrequisitos: [], creditos: 6 },
+      { nombre: "Curso Libre I", prerrequisitos: [], creditos: 8 },
+      { nombre: "Matemática para la Gestión II", prerrequisitos: ["Matemática para la Gestión I"], creditos: 8 },
+      { nombre: "Evolución y Complejidad de la Administración", prerrequisitos: ["Introducción a la Gestión Pública"], creditos: 8 },
+      { nombre: "Ideas y Debates Políticos Contemporáneos", prerrequisitos: [], creditos: 8 },
+      { nombre: "Epistemología de las Ciencias Sociales", prerrequisitos: [], creditos: 8 },
+      { nombre: "Marco Normativo I", prerrequisitos: ["Bases Jurídicas para la Administración"], creditos: 8 },
+      { nombre: "Inglés II", prerrequisitos: ["Inglés I"], creditos: 6 },
+      { nombre: "Curso Libre II", prerrequisitos: ["Curso Libre I"], creditos: 8 },
+      { nombre: "Estadística para la Gestión I", prerrequisitos: ["Matemática para la Gestión II"], creditos: 8 },
+      { nombre: "Comportamiento Humano en la Organización", prerrequisitos: ["Evolución y Complejidad de la Administración"], creditos: 8 },
+      { nombre: "Fenómenos Políticos", prerrequisitos: ["Ideas y Debates Políticos Contemporáneos"], creditos: 8 },
+      { nombre: "Microeconomía para la Gestión Pública", prerrequisitos: ["Matemática para la Gestión II"], creditos: 8 },
+      { nombre: "Marco Normativo II", prerrequisitos: ["Marco Normativo I"], creditos: 8 },
+      { nombre: "Métodos Cualitativos", prerrequisitos: ["Epistemología de las Ciencias Sociales"], creditos: 8 },
+      { nombre: "Política Internacional", prerrequisitos: ["Fenómenos Políticos"], creditos: 8 },
+      { nombre: "Diseño Organizacional", prerrequisitos: ["Comportamiento Humano en la Organización"], creditos: 8 },
+      { nombre: "Métodos Cuantitativos", prerrequisitos: ["Estadística para la Gestión I"], creditos: 8 },
+      { nombre: "Planeamiento Estratégico", prerrequisitos: ["Diseño Organizacional"], creditos: 8 },
+      { nombre: "Gestión Financiera Pública", prerrequisitos: ["Microeconomía para la Gestión Pública"], creditos: 8 },
+      { nombre: "Negociación y Resolución de Conflictos", prerrequisitos: ["Comportamiento Humano en la Organización"], creditos: 8 },
+      { nombre: "Ciclo y Evaluación de Políticas Públicas", prerrequisitos: ["Planeamiento Estratégico"], creditos: 8 },
+      { nombre: "Contabilidad Gubernamental", prerrequisitos: ["Gestión Financiera Pública"], creditos: 8 },
+      { nombre: "Gestión de Personas", prerrequisitos: ["Diseño Organizacional"], creditos: 8 },
+      { nombre: "Gestión de Proyectos", prerrequisitos: ["Planeamiento Estratégico"], creditos: 8 },
+      { nombre: "Electivo I", prerrequisitos: [], creditos: 8 },
+      { nombre: "Análisis Empírico de Políticas", prerrequisitos: ["Métodos Cuantitativos", "Métodos Cualitativos"], creditos: 8 },
+      { nombre: "Electivo II", prerrequisitos: ["Electivo I"], creditos: 8 },
+      { nombre: "Electivo III", prerrequisitos: ["Electivo II"], creditos: 8 },
+      { nombre: "Curso de Formación General", prerrequisitos: [], creditos: 8 },
+      { nombre: "Simulación de Asesoría Política", prerrequisitos: ["Gestión de Proyectos"], creditos: 8 },
+      { nombre: "Práctica Profesional", prerrequisitos: ["Ciclo y Evaluación de Políticas Públicas"], creditos: 12 },
+      { nombre: "Examen de Título", prerrequisitos: ["Análisis Empírico de Políticas"], creditos: 12 }
+    ];
+
+    const container = document.getElementById("cursos-container");
+    const creditosDiv = document.getElementById("creditos");
+    const resetBtn = document.getElementById("reset-btn");
+
+    let aprobados = JSON.parse(localStorage.getItem("aprobados")) || [];
+
+    function puedeActivar(curso) {
+      if (curso.prerrequisitos.length === 0) return true;
+      return curso.prerrequisitos.every(prerreq => aprobados.includes(prerreq));
+    }
+
+    function actualizarUI() {
+      container.innerHTML = "";
+      let totalCreditos = 0;
+
+      cursos.forEach(curso => {
+        const div = document.createElement("div");
+        div.classList.add("curso");
+
+        if (aprobados.includes(curso.nombre)) {
+          div.classList.add("aprobado");
+          totalCreditos += curso.creditos;
+        } else if (!puedeActivar(curso)) {
+          div.classList.add("bloqueado");
+        }
+
+        div.textContent = curso.nombre + " (" + curso.creditos + " créditos)";
+        div.title = "Prerrequisitos: " + (curso.prerrequisitos.length > 0 ? curso.prerrequisitos.join(", ") : "Ninguno");
+
+        if (!aprobados.includes(curso.nombre) && puedeActivar(curso)) {
+          div.addEventListener("click", () => {
+            aprobados.push(curso.nombre);
+            guardarEstado();
+            actualizarUI();
+          });
+        }
+
+        container.appendChild(div);
+      });
+
+      creditosDiv.textContent = "Créditos Aprobados: " + totalCreditos;
+    }
+
+    function guardarEstado() {
+      localStorage.setItem("aprobados", JSON.stringify(aprobados));
+    }
+
+    resetBtn.addEventListener("click", () => {
+      aprobados = [];
+      guardarEstado();
+      actualizarUI();
+    });
+
+    actualizarUI();
+  </script>
+
+</body>
+</html>
