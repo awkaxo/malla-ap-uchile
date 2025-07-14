@@ -2,277 +2,34 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>🌷 Malla Curricular Diplomática 🌷</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: linear-gradient(to bottom right, #f9f6ff, #fef1ff);
-      color: #5a4a7a;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 2em;
-      color: #9b71c7;
-      margin-bottom: 5px;
-    }
-
-    h2 {
-      font-weight: normal;
-      color: #b68cd2;
-      font-size: 1.2em;
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-
-    #creditos {
-      font-weight: bold;
-      font-size: 1.2em;
-      background-color: #fbe4ff;
-      display: inline-block;
-      padding: 10px 18px;
-      border-radius: 20px;
-      color: #7b4992;
-      box-shadow: 0 0 6px rgba(157, 102, 173, 0.2);
-    }
-
-    #cursos-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .curso {
-      width: 260px;
-      margin: 10px;
-      padding: 15px;
-      background: #fceeff;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-      color: #6d4e9d;
-      font-weight: 600;
-      user-select: none;
-    }
-
-    .curso:hover:not(.bloqueado):not(.aprobado) {
-      background: #efd6ff;
-      transform: translateY(-3px);
-    }
-
-    .curso.aprobado {
-      background: #d7f5e6;
-      color: #3a785f;
-      text-decoration: line-through;
-      cursor: default;
-    }
-
-    .curso.bloqueado {
-      background: #f3f0f7;
-      color: #b6a7c6;
-      cursor: not-allowed;
-    }
-
-    #logout-btn {
-      margin-top: 30px;
-      padding: 12px 30px;
-      background: #fbcfe8;
-      border: none;
-      border-radius: 25px;
-      color: #6c4072;
-      font-weight: bold;
-      font-size: 1.1em;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    #logout-btn:hover {
-      background: #f9a8d4;
-    }
-
-    #mensaje-desbloqueo {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fef3ff;
-      color: #7c3aed;
-      padding: 12px 24px;
-      border-radius: 30px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      font-weight: 600;
-      font-size: 1em;
-      z-index: 1000;
-      transition: opacity 0.3s ease;
-      display: none;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Malla Interactiva Diplomática</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
 </head>
 <body>
+  <header>
+    <h1>🌸 Malla Interactiva - Administración Pública 🌸</h1>
+    <button id="logout-btn">Cerrar sesión</button>
+  </header>
 
-  <h1>🌸 Malla Curricular de Administración Pública 🌸</h1>
-  <h2>Modo diplomacia activado ( ｡•̀ •́)✧</h2>
+  <div class="tabs">
+    <button class="tab active" data-year="1">1er Año</button>
+    <button class="tab" data-year="2">2do Año</button>
+    <button class="tab" data-year="3">3er Año</button>
+    <button class="tab" data-year="4">4to Año</button>
+    <button class="tab" data-year="5">5to Año</button>
+  </div>
+
+  <div id="mensaje-desbloqueo">✨ ¡Curso desbloqueado! ✨</div>
+
   <div id="creditos">Créditos Aprobados: 0</div>
-  <div id="cursos-container"></div>
-  <button id="logout-btn">Cerrar Sesión 🚪</button>
-  <div id="mensaje-desbloqueo">&#127881; ¡Nuevo curso desbloqueado! 📚</div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <main id="años-container">
+    <!-- Años y semestres se insertan con JS -->
+  </main>
 
-  <script>
-    // Configuración Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
-      authDomain: "malla-interactiva-ap.firebaseapp.com",
-      projectId: "malla-interactiva-ap",
-      storageBucket: "malla-interactiva-ap.appspot.com",
-      messagingSenderId: "982790383608",
-      appId: "1:982790383608:web:0c0100d098ba1713df580d",
-      measurementId: "G-D8F2168ZB3"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    const cursos = [
-      { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
-      { nombre: "Introducción a la Gestión Pública", prerrequisitos: [], creditos: 8 },
-      { nombre: "Historia de las Instituciones Políticas", prerrequisitos: [], creditos: 8 },
-      { nombre: "Tecnologías y Sistemas de Información", prerrequisitos: [], creditos: 8 },
-      { nombre: "Bases Jurídicas para la Administración", prerrequisitos: [], creditos: 8 },
-      { nombre: "Inglés I", prerrequisitos: [], creditos: 6 },
-      { nombre: "Curso Libre I", prerrequisitos: [], creditos: 8 },
-      { nombre: "Matemática para la Gestión II", prerrequisitos: ["Matemática para la Gestión I"], creditos: 8 },
-      { nombre: "Evolución y Complejidad de la Administración", prerrequisitos: ["Introducción a la Gestión Pública"], creditos: 8 },
-      { nombre: "Ideas y Debates Políticos Contemporáneos", prerrequisitos: [], creditos: 8 },
-      { nombre: "Epistemología de las Ciencias Sociales", prerrequisitos: [], creditos: 8 },
-      { nombre: "Marco Normativo I", prerrequisitos: ["Bases Jurídicas para la Administración"], creditos: 8 },
-      { nombre: "Inglés II", prerrequisitos: ["Inglés I"], creditos: 6 },
-      { nombre: "Curso Libre II", prerrequisitos: ["Curso Libre I"], creditos: 8 },
-      { nombre: "Estadística para la Gestión I", prerrequisitos: ["Matemática para la Gestión II"], creditos: 8 },
-      { nombre: "Comportamiento Humano en la Organización", prerrequisitos: ["Evolución y Complejidad de la Administración"], creditos: 8 },
-      { nombre: "Fenómenos Políticos", prerrequisitos: ["Ideas y Debates Políticos Contemporáneos"], creditos: 8 },
-      { nombre: "Microeconomía para la Gestión Pública", prerrequisitos: ["Matemática para la Gestión II"], creditos: 8 },
-      { nombre: "Marco Normativo II", prerrequisitos: ["Marco Normativo I"], creditos: 8 },
-      { nombre: "Métodos Cualitativos", prerrequisitos: ["Epistemología de las Ciencias Sociales"], creditos: 8 },
-      { nombre: "Política Internacional", prerrequisitos: ["Fenómenos Políticos"], creditos: 8 },
-      { nombre: "Diseño Organizacional", prerrequisitos: ["Comportamiento Humano en la Organización"], creditos: 8 },
-      { nombre: "Métodos Cuantitativos", prerrequisitos: ["Estadística para la Gestión I"], creditos: 8 },
-      { nombre: "Planeamiento Estratégico", prerrequisitos: ["Diseño Organizacional"], creditos: 8 },
-      { nombre: "Gestión Financiera Pública", prerrequisitos: ["Microeconomía para la Gestión Pública"], creditos: 8 },
-      { nombre: "Negociación y Resolución de Conflictos", prerrequisitos: ["Comportamiento Humano en la Organización"], creditos: 8 },
-      { nombre: "Ciclo y Evaluación de Políticas Públicas", prerrequisitos: ["Planeamiento Estratégico"], creditos: 8 },
-      { nombre: "Contabilidad Gubernamental", prerrequisitos: ["Gestión Financiera Pública"], creditos: 8 },
-      { nombre: "Gestión de Personas", prerrequisitos: ["Diseño Organizacional"], creditos: 8 },
-      { nombre: "Gestión de Proyectos", prerrequisitos: ["Planeamiento Estratégico"], creditos: 8 },
-      { nombre: "Electivo I", prerrequisitos: [], creditos: 8 },
-      { nombre: "Análisis Empírico de Políticas", prerrequisitos: ["Métodos Cuantitativos", "Métodos Cualitativos"], creditos: 8 },
-      { nombre: "Electivo II", prerrequisitos: ["Electivo I"], creditos: 8 },
-      { nombre: "Electivo III", prerrequisitos: ["Electivo II"], creditos: 8 },
-      { nombre: "Curso de Formación General", prerrequisitos: [], creditos: 8 },
-      { nombre: "Simulación de Asesoría Política", prerrequisitos: ["Gestión de Proyectos"], creditos: 8 },
-      { nombre: "Práctica Profesional", prerrequisitos: ["Ciclo y Evaluación de Políticas Públicas"], creditos: 12 },
-      { nombre: "Examen de Título", prerrequisitos: ["Análisis Empírico de Políticas"], creditos: 12 }
-    ];
-
-    let creditos = 0;
-    let userEmail = null;
-
-    function mostrarMensajeDesbloqueo() {
-      const mensaje = document.getElementById("mensaje-desbloqueo");
-      mensaje.style.display = "block";
-      mensaje.style.opacity = "1";
-      setTimeout(() => {
-        mensaje.style.opacity = "0";
-        setTimeout(() => {
-          mensaje.style.display = "none";
-        }, 500);
-      }, 2000);
-    }
-
-    function guardarProgreso() {
-      if (!userEmail) {
-        console.log("No hay usuario para guardar progreso");
-        return;
-      }
-      const key = "malla-" + userEmail.toLowerCase();
-      const data = cursos.map(c => ({ nombre: c.nombre, aprobado: c.aprobado || false }));
-      localStorage.setItem(key, JSON.stringify(data));
-      localStorage.setItem(key + "-creditos", creditos);
-      console.log("Guardando progreso para", userEmail, data, creditos);
-    }
-
-    function cargarProgreso() {
-      if (!userEmail) {
-        console.log("No hay usuario para cargar progreso");
-        return;
-      }
-      const key = "malla-" + userEmail.toLowerCase();
-      const saved = localStorage.getItem(key);
-      const savedCreditos = localStorage.getItem(key + "-creditos");
-      if (saved) {
-        const data = JSON.parse(saved);
-        cursos.forEach(curso => {
-          const guardado = data.find(d => d.nombre === curso.nombre);
-          curso.aprobado = guardado ? guardado.aprobado : false;
-        });
-        console.log("Cargando progreso para", userEmail, data);
-      }
-      creditos = savedCreditos ? parseInt(savedCreditos) : 0;
-      document.getElementById("creditos").textContent = `Créditos Aprobados: ${creditos}`;
-    }
-
-    function actualizarCursos() {
-      const container = document.getElementById("cursos-container");
-      container.innerHTML = "";
-
-      cursos.forEach(curso => {
-        const desbloqueado = curso.prerrequisitos.every(pr =>
-          cursos.find(c => c.nombre === pr)?.aprobado
-        );
-
-        const estado = curso.aprobado ? "aprobado" : (desbloqueado ? "" : "bloqueado");
-
-        const div = document.createElement("div");
-        div.className = "curso " + estado;
-        div.textContent = curso.nombre;
-
-        if (estado === "") {
-          div.addEventListener("click", () => {
-            curso.aprobado = true;
-            creditos += curso.creditos;
-            document.getElementById("creditos").textContent = `Créditos Aprobados: ${creditos}`;
-            mostrarMensajeDesbloqueo();
-            guardarProgreso();
-            actualizarCursos();
-          });
-        }
-
-        container.appendChild(div);
-      });
-    }
-
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "index.html";
-        return;
-      }
-      userEmail = user.email;
-      console.log("Usuario conectado:", userEmail);
-      cargarProgreso();
-      actualizarCursos();
-    });
-
-    document.getElementById("logout-btn").addEventListener("click", () => {
-      auth.signOut().catch(err => alert("Error cerrando sesión: " + err.message));
-    });
-  </script>
+  <script src="malla-script.js"></script>
 </body>
 </html>
