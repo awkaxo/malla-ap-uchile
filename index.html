@@ -1,117 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Malla Interactiva AP UChile</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Malla Interactiva AP UChile - Login y Registro</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>✨ Malla Interactiva Administración Pública - UChile ✨</h1>
-    <p>Marca los ramos que ya aprobaste. ¡Se guardan con tu cuenta!</p>
-  </header>
+<header>
+  <h1>✨ Malla Interactiva Administración Pública - UChile ✨</h1>
+  <p>Marca los ramos que aprobaste. ¡Guarda con tu cuenta!</p>
+</header>
 
-  <section class="auth">
-    <input type="email" id="email" placeholder="Correo electrónico">
-    <input type="password" id="password" placeholder="Contraseña">
-    <div class="buttons">
-      <button id="loginBtn">Iniciar Sesión</button>
-      <button id="registerBtn">Crear Cuenta</button>
-    </div>
-  </section>
+<section class="auth-container">
+  <div class="auth-box">
+    <h2>Crear Cuenta</h2>
+    <input type="email" id="reg-email" placeholder="Correo electrónico" />
+    <input type="password" id="reg-password" placeholder="Contraseña (min 6 caracteres)" />
+    <button id="registerBtn">Crear Cuenta</button>
+  </div>
 
-  <main id="malla"></main>
+  <div class="auth-box">
+    <h2>Iniciar Sesión</h2>
+    <input type="email" id="login-email" placeholder="Correo electrónico" />
+    <input type="password" id="login-password" placeholder="Contraseña" />
+    <button id="loginBtn">Iniciar Sesión</button>
+  </div>
+</section>
 
-  <!-- Tu script de ramos -->
-  <script src="malla.js"></script>
+<main id="malla"></main>
 
-  <!-- Firebase + lógica de login -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+<script src="malla.js"></script>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyC0y-ES5y6c8uiYMKew-TEv-wz_iMbXaJc",
-      authDomain: "malla-interactiva.firebaseapp.com",
-      projectId: "malla-interactiva",
-      storageBucket: "malla-interactiva.appspot.com",
-      messagingSenderId: "1084098910135",
-      appId: "1:1084098910135:web:62633e770f70cf534bba32",
-      measurementId: "G-SG22ZFKRMD"
-    };
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+  } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+  const firebaseConfig = {
+    apiKey: "AIzaSyC0y-ES5y6c8uiYMKew-TEv-wz_iMbXaJc",
+    authDomain: "malla-interactiva.firebaseapp.com",
+    projectId: "malla-interactiva",
+    storageBucket: "malla-interactiva.appspot.com",
+    messagingSenderId: "1084098910135",
+    appId: "1:1084098910135:web:62633e770f70cf534bba32",
+    measurementId: "G-SG22ZFKRMD",
+  };
 
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-      signInWithEmailAndPassword(auth, email, pass)
-        .then(user => cargarEstado(user.user.uid))
-        .catch(err => alert("Error al iniciar sesión: " + err.message));
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  const regEmailInput = document.getElementById("reg-email");
+  const regPassInput = document.getElementById("reg-password");
+  const loginEmailInput = document.getElementById("login-email");
+  const loginPassInput = document.getElementById("login-password");
+
+  document.getElementById("registerBtn").addEventListener("click", () => {
+    const email = regEmailInput.value.trim();
+    const pass = regPassInput.value;
+    if (!email || !pass) {
+      alert("Por favor ingresa correo y contraseña");
+      return;
+    }
+    if (pass.length < 6) {
+      alert("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+    createUserWithEmailAndPassword(auth, email, pass)
+      .then((user) => {
+        alert("Cuenta creada 💖");
+        guardarEstado(user.user.uid);
+      })
+      .catch((err) => alert("Error al crear cuenta: " + err.message));
+  });
+
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const email = loginEmailInput.value.trim();
+    const pass = loginPassInput.value;
+    if (!email || !pass) {
+      alert("Por favor ingresa correo y contraseña");
+      return;
+    }
+    signInWithEmailAndPassword(auth, email, pass)
+      .then((user) => cargarEstado(user.user.uid))
+      .catch((err) => alert("Error al iniciar sesión: " + err.message));
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) cargarEstado(user.uid);
+  });
+
+  async function guardarEstado(userId) {
+    const aprobados = Array.from(document.querySelectorAll(".ramo.approved")).map((div) => div.id);
+    await setDoc(doc(db, "usuarios", userId), { aprobados });
+  }
+
+  async function cargarEstado(userId) {
+    const snap = await getDoc(doc(db, "usuarios", userId));
+    const aprobados = snap.exists() ? snap.data().aprobados : [];
+    renderMalla(userId, aprobados);
+  }
+
+  function renderMalla(userId, aprobados = []) {
+    const malla = document.getElementById("malla");
+    malla.innerHTML = "";
+    ramos.forEach((r) => {
+      const div = document.createElement("div");
+      div.id = r.id;
+      div.className = "ramo" + (aprobados.includes(r.id) ? " approved" : "");
+      div.style.backgroundColor = r.color;
+      div.innerHTML = `<strong>${r.nombre}</strong>`;
+      div.onclick = () => {
+        div.classList.toggle("approved");
+        actualizarMalla();
+        guardarEstado(userId);
+      };
+      malla.appendChild(div);
     });
+    actualizarMalla();
+  }
 
-    document.getElementById("registerBtn").addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-      createUserWithEmailAndPassword(auth, email, pass)
-        .then(user => {
-          alert("Cuenta creada 💖");
-          guardarEstado(user.user.uid);
-        })
-        .catch(err => alert("Error al crear cuenta: " + err.message));
+  function actualizarMalla() {
+    ramos.forEach((r) => {
+      const div = document.getElementById(r.id);
+      if (!div) return;
+      const aprobado = div.classList.contains("approved");
+      const requisitos = r.prereq.map((pr) => document.getElementById(pr)?.classList.contains("approved"));
+      if (aprobado || requisitos.every(Boolean)) {
+        div.classList.remove("locked");
+      } else {
+        div.classList.add("locked");
+      }
     });
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) cargarEstado(user.uid);
-    });
-
-    async function guardarEstado(userId) {
-      const aprobados = Array.from(document.querySelectorAll(".ramo.approved")).map(div => div.id);
-      await setDoc(doc(db, "usuarios", userId), { aprobados });
-    }
-
-    async function cargarEstado(userId) {
-      const snap = await getDoc(doc(db, "usuarios", userId));
-      const aprobados = snap.exists() ? snap.data().aprobados : [];
-      renderMalla(userId, aprobados);
-    }
-
-    function renderMalla(userId, aprobados = []) {
-      const malla = document.getElementById("malla");
-      malla.innerHTML = "";
-      ramos.forEach(r => {
-        const div = document.createElement("div");
-        div.id = r.id;
-        div.className = "ramo" + (aprobados.includes(r.id) ? " approved" : "");
-        div.style.backgroundColor = r.color;
-        div.innerHTML = `<strong>${r.nombre}</strong>`;
-        div.onclick = () => {
-          div.classList.toggle("approved");
-          actualizarMalla();
-          guardarEstado(userId);
-        };
-        malla.appendChild(div);
-      });
-      actualizarMalla();
-    }
-
-    function actualizarMalla() {
-      ramos.forEach(r => {
-        const div = document.getElementById(r.id);
-        if (!div) return;
-        const aprobado = div.classList.contains("approved");
-        const requisitos = r.prereq.map(pr => document.getElementById(pr)?.classList.contains("approved"));
-        if (aprobado || requisitos.every(Boolean)) {
-          div.classList.remove("locked");
-        } else {
-          div.classList.add("locked");
-        }
-      });
-    }
-  </script>
+  }
+</script>
 </body>
 </html>
