@@ -1,193 +1,135 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Malla Interactiva AP UChile - Login y Registro</title>
-<style>
-  /* Estilos integrados */
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  body {
-    background: linear-gradient(135deg, #f5f7ff, #e3e9ff);
-    min-height: 100vh;
-    color: #3b2a5f;
-    padding: 1rem;
-  }
-  header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-  header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.3rem;
-    color: #4b367c;
-    text-shadow: 1px 1px 3px rgba(255 255 255 / 0.8);
-  }
-  header p {
-    color: #6b5ca5;
-    font-size: 1.1rem;
-    font-weight: 500;
-  }
-  .auth-container {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
-    margin-bottom: 3rem;
-    flex-wrap: wrap;
-  }
-  .auth-box {
-    background: #fff;
-    padding: 1.8rem 2rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(114, 85, 145, 0.15);
-    width: 280px;
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
-  .auth-box:hover {
-    transform: translateY(-6px);
-  }
-  .auth-box h2 {
-    margin-bottom: 1rem;
-    color: #5b3e9e;
-    font-weight: 700;
-    letter-spacing: 1px;
-    font-size: 1.4rem;
-  }
-  .auth-box input {
-    width: 100%;
-    padding: 0.7rem 1rem;
-    margin: 0.5rem 0 1rem 0;
-    border-radius: 12px;
-    border: 1.8px solid #cdb9e8;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-  }
-  .auth-box input:focus {
-    outline: none;
-    border-color: #7e57c2;
-    box-shadow: 0 0 6px #9575cd88;
-  }
-  .auth-box button {
-    background: #7e57c2;
-    color: white;
-    border: none;
-    padding: 0.65rem 1.4rem;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    width: 100%;
-    font-size: 1.1rem;
-  }
-  .auth-box button:hover {
-    background: #955ad9;
-  }
-  #malla {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    padding-bottom: 2rem;
-  }
-  .ramo {
-    background: white;
-    border-radius: 14px;
-    padding: 1.2rem 1rem;
-    width: 210px;
-    text-align: center;
-    box-shadow: 0 6px 14px rgba(121, 95, 178, 0.15);
-    cursor: pointer;
-    transition: box-shadow 0.25s ease, transform 0.25s ease;
-    border: 2px solid transparent;
-    font-weight: 600;
-    user-select: none;
-  }
-  .ramo:hover {
-    box-shadow: 0 8px 24px rgba(121, 95, 178, 0.3);
-    transform: translateY(-5px);
-  }
-  .ramo.locked {
-    opacity: 0.45;
-    pointer-events: none;
-    filter: grayscale(50%);
-    cursor: not-allowed;
-  }
-  .ramo.approved {
-    border-color: #6a3ab6;
-    background: #ede5fa;
-    color: #4b367c;
-    box-shadow: 0 6px 14px rgba(110, 76, 169, 0.4);
-  }
-  .ramo strong {
-    display: block;
-    font-size: 1rem;
-    line-height: 1.3;
-  }
-  @media (max-width: 600px) {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Malla Interactiva AP UChile</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f7f9ff, #e5ecff);
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      background-color: #6a5acd;
+      color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
     .auth-container {
-      flex-direction: column;
-      align-items: center;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem;
+      flex-wrap: wrap;
     }
+
     .auth-box {
-      width: 90vw;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 280px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
     }
+
+    .auth-box input {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .auth-box button {
+      width: 100%;
+      padding: 0.7rem;
+      background: #6a5acd;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     #malla {
-      gap: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
     }
+
     .ramo {
-      width: 90vw;
+      width: 180px;
+      padding: 1rem;
+      background: #fff;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
     }
-  }
-  /* Mensaje de carga */
-  #loadingMessage {
-    position: fixed;
-    top: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #7e57c2;
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 10px;
-    z-index: 9999;
-    display: none;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(126, 87, 194, 0.8);
-  }
-</style>
+
+    .ramo:hover {
+      transform: scale(1.05);
+    }
+
+    .ramo.approved {
+      background: #e6f6e6;
+      border-color: #4caf50;
+    }
+
+    .ramo.locked {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    #loadingMessage {
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #6a5acd;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
+
 <header>
-  <h1>✨ Malla Interactiva Administración Pública - UChile ✨</h1>
-  <p>Marca los ramos que aprobaste. ¡Guarda con tu cuenta!</p>
+  <h1>Malla Interactiva Administración Pública</h1>
+  <p>Marca los ramos aprobados y guarda tu progreso</p>
 </header>
-
-<section class="auth-container">
-  <div class="auth-box">
-    <h2>Crear Cuenta</h2>
-    <input type="email" id="reg-email" placeholder="Correo electrónico" />
-    <input type="password" id="reg-password" placeholder="Contraseña (mín. 6 caracteres)" />
-    <button id="registerBtn">Crear Cuenta</button>
-  </div>
-
-  <div class="auth-box">
-    <h2>Iniciar Sesión</h2>
-    <input type="email" id="login-email" placeholder="Correo electrónico" />
-    <input type="password" id="login-password" placeholder="Contraseña" />
-    <button id="loginBtn">Iniciar Sesión</button>
-  </div>
-</section>
 
 <div id="loadingMessage">Cargando...</div>
 
+<section class="auth-container">
+  <div class="auth-box">
+    <h3>Crear cuenta</h3>
+    <input type="email" id="reg-email" placeholder="Correo electrónico" />
+    <input type="password" id="reg-password" placeholder="Contraseña" />
+    <button id="registerBtn">Registrarse</button>
+  </div>
+
+  <div class="auth-box">
+    <h3>Iniciar sesión</h3>
+    <input type="email" id="login-email" placeholder="Correo electrónico" />
+    <input type="password" id="login-password" placeholder="Contraseña" />
+    <button id="loginBtn">Entrar</button>
+  </div>
+</section>
+
 <main id="malla"></main>
 
+<!-- Firebase y lógica -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
@@ -195,83 +137,26 @@
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    onAuthStateChanged,
+    onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC0y-ES5y6c8uiYMKew-TEv-wz_iMbXaJc",
     authDomain: "malla-interactiva.firebaseapp.com",
     projectId: "malla-interactiva",
-    storageBucket: "malla-interactiva.appspot.com",
+    storageBucket: "malla-interactiva.appspot.com", // CORREGIDO
     messagingSenderId: "1084098910135",
     appId: "1:1084098910135:web:62633e770f70cf534bba32",
-    measurementId: "G-SG22ZFKRMD",
+    measurementId: "G-SG22ZFKRMD"
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
 
-  const regEmailInput = document.getElementById("reg-email");
-  const regPassInput = document.getElementById("reg-password");
-  const loginEmailInput = document.getElementById("login-email");
-  const loginPassInput = document.getElementById("login-password");
-
-  let currentUserId = null;
-
-  document.getElementById("registerBtn").addEventListener("click", () => {
-    const email = regEmailInput.value.trim();
-    const pass = regPassInput.value;
-    if (!email || !pass) {
-      alert("Por favor ingresa correo y contraseña");
-      return;
-    }
-    if (pass.length < 6) {
-      alert("La contraseña debe tener al menos 6 caracteres");
-      return;
-    }
-    createUserWithEmailAndPassword(auth, email, pass)
-      .then((userCredential) => {
-        alert("Cuenta creada 💖");
-        currentUserId = userCredential.user.uid;
-        guardarEstado(currentUserId);
-      })
-      .catch((err) => alert("Error al crear cuenta: " + err.message));
-  });
-
-  document.getElementById("loginBtn").addEventListener("click", () => {
-    const email = loginEmailInput.value.trim();
-    const pass = loginPassInput.value;
-    if (!email || !pass) {
-      alert("Por favor ingresa correo y contraseña");
-      return;
-    }
-    signInWithEmailAndPassword(auth, email, pass)
-      .then((userCredential) => {
-        currentUserId = userCredential.user.uid;
-        mostrarMensaje("Cargando tu malla...");
-        cargarEstado(currentUserId).then(() => {
-          ocultarMensaje();
-        });
-      })
-      .catch((err) => alert("Error al iniciar sesión: " + err.message));
-  });
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUserId = user.uid;
-      mostrarMensaje("Cargando tu malla...");
-      cargarEstado(currentUserId).then(() => {
-        ocultarMensaje();
-      });
-    } else {
-      currentUserId = null;
-      document.getElementById("malla").innerHTML = "";
-    }
-  });
-
   const ramos = [
-    { id: "mat1", nombre: "🎓 Matemática para la Gestión I", color: "#ffe0eb", prereq: [] },
+
+{ id: "mat1", nombre: "🎓 Matemática para la Gestión I", color: "#ffe0eb", prereq: [] },
     { id: "intro", nombre: "🎓 Introducción a la Gestión Pública", color: "#ffe0eb", prereq: [] },
     { id: "histinst", nombre: "🎓 Historia de las Instituciones Políticas de Chile", color: "#ffe0eb", prereq: [] },
     { id: "sistemasinfo", nombre: "🎓 Tecnologías y Sistemas de Información", color: "#ffe0eb", prereq: [] },
@@ -311,103 +196,119 @@
     { id: "examen", nombre: "🎓 Examen de Título", color: "#fff0f0", prereq: ["analisisempirico"] },
   ];
 
+    // Agrega el resto de los ramos igual como los tienes
+  ];
+
   function crearMalla() {
-    const container = document.getElementById("malla");
-    container.innerHTML = ""; // Limpia antes de crear
-    ramos.forEach(ramo => {
+    const cont = document.getElementById("malla");
+    cont.innerHTML = "";
+    ramos.forEach(r => {
       const div = document.createElement("div");
+      div.id = r.id;
       div.className = "ramo locked";
-      div.id = ramo.id;
-      div.style.backgroundColor = ramo.color;
-      div.innerHTML = `<strong>${ramo.nombre}</strong>`;
+      div.style.backgroundColor = r.color;
+      div.innerHTML = `<strong>${r.nombre}</strong>`;
       div.addEventListener("click", () => {
-        if (!div.classList.contains("locked")) {
-          div.classList.toggle("approved");
-          actualizarMalla();
-          if(currentUserId) guardarEstado(currentUserId);
-        }
+        div.classList.toggle("approved");
+        actualizarMalla();
+        if (userId) guardarEstado(userId);
       });
-      container.appendChild(div);
+      cont.appendChild(div);
     });
     actualizarMalla();
   }
 
   function actualizarMalla() {
-    ramos.forEach(ramo => {
-      const div = document.getElementById(ramo.id);
+    ramos.forEach(r => {
+      const div = document.getElementById(r.id);
       const aprobado = div.classList.contains("approved");
       if (aprobado) {
         div.classList.remove("locked");
       } else {
-        const prereqsOk = ramo.prereq.every(pr => {
-          const prereqDiv = document.getElementById(pr);
-          return prereqDiv && prereqDiv.classList.contains("approved");
+        const ok = r.prereq.every(p => {
+          const prDiv = document.getElementById(p);
+          return prDiv && prDiv.classList.contains("approved");
         });
-        if (prereqsOk) {
-          div.classList.remove("locked");
-        } else {
-          div.classList.add("locked");
-          div.classList.remove("approved");
-        }
+        div.classList.toggle("locked", !ok);
       }
     });
   }
 
-  async function guardarEstado(userId) {
+  async function guardarEstado(uid) {
     const estado = {};
-    ramos.forEach(ramo => {
-      const div = document.getElementById(ramo.id);
-      estado[ramo.id] = div.classList.contains("approved");
+    ramos.forEach(r => {
+      const div = document.getElementById(r.id);
+      estado[r.id] = div.classList.contains("approved");
     });
-    try {
-      await setDoc(doc(db, "usuarios", userId), { estado });
-      // console.log("Estado guardado");
-    } catch (error) {
-      alert("Error guardando estado: " + error.message);
-    }
+    await setDoc(doc(db, "usuarios", uid), { estado });
   }
 
-  async function cargarEstado(userId) {
-    try {
-      const docRef = doc(db, "usuarios", userId);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        if(data.estado){
-          for (const [id, aprobado] of Object.entries(data.estado)) {
-            const div = document.getElementById(id);
-            if (div) {
-              if (aprobado) div.classList.add("approved");
-              else div.classList.remove("approved");
-            }
-          }
-          actualizarMalla();
-          return;
+  async function cargarEstado(uid) {
+    const docRef = doc(db, "usuarios", uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const datos = docSnap.data().estado;
+      for (let [id, aprobado] of Object.entries(datos)) {
+        const div = document.getElementById(id);
+        if (div) {
+          div.classList.toggle("approved", aprobado);
         }
       }
-      // Si no hay datos guardados
-      crearMalla();
-    } catch (error) {
-      alert("Error cargando estado: " + error.message);
-      crearMalla();
+      actualizarMalla();
     }
   }
 
-  function mostrarMensaje(msg) {
-    const loading = document.getElementById("loadingMessage");
-    loading.textContent = msg;
-    loading.style.display = "block";
+  let userId = null;
+
+  function mostrarCarga(msg) {
+    const el = document.getElementById("loadingMessage");
+    el.textContent = msg;
+    el.style.display = "block";
   }
 
-  function ocultarMensaje() {
-    const loading = document.getElementById("loadingMessage");
-    loading.style.display = "none";
+  function ocultarCarga() {
+    document.getElementById("loadingMessage").style.display = "none";
   }
 
-  window.onload = () => {
-    crearMalla();
-  };
+  // Eventos
+  document.getElementById("registerBtn").addEventListener("click", () => {
+    const email = document.getElementById("reg-email").value.trim();
+    const pass = document.getElementById("reg-password").value;
+    if (!email || !pass) return alert("Ingresa correo y contraseña");
+    createUserWithEmailAndPassword(auth, email, pass)
+      .then(cred => {
+        userId = cred.user.uid;
+        alert("Cuenta creada 🎉");
+        crearMalla();
+      })
+      .catch(err => alert("Error: " + err.message));
+  });
+
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    const email = document.getElementById("login-email").value.trim();
+    const pass = document.getElementById("login-password").value;
+    if (!email || !pass) return alert("Ingresa correo y contraseña");
+    mostrarCarga("Cargando tu malla...");
+    signInWithEmailAndPassword(auth, email, pass)
+      .then(cred => {
+        userId = cred.user.uid;
+        crearMalla();
+        cargarEstado(userId).then(ocultarCarga);
+      })
+      .catch(err => {
+        ocultarCarga();
+        alert("Error al iniciar sesión: " + err.message);
+      });
+  });
+
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      userId = user.uid;
+      crearMalla();
+      cargarEstado(userId);
+    }
+  });
+
 </script>
-
 </body>
 </html>
