@@ -1,0 +1,19 @@
+const cursos = [
+  { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
+  { nombre: "Introducción a la Gestión Pública", prerrequisitos: [], creditos: 8 },
+  { nombre: "Historia de las Instituciones Políticas", prerrequisitos: [], creditos: 8 },
+];
+
+function actualizarCursos() {
+  const container = document.getElementById("cursos-container");
+  container.innerHTML = "";
+
+  cursos.forEach(curso => {
+    const div = document.createElement("div");
+    div.className = "curso";
+    div.textContent = curso.nombre;
+    container.appendChild(div);
+  });
+}
+
+actualizarCursos();
