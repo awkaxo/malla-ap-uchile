@@ -1,3 +1,4 @@
+// Configura tu Firebase aquí (reemplaza con tus datos)
 const firebaseConfig = {
   apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
   authDomain: "malla-interactiva-ap.firebaseapp.com",
@@ -11,18 +12,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-
-function mostrarMensajeDesbloqueo() {
-  const mensaje = document.getElementById("mensaje-desbloqueo");
-  mensaje.style.display = "block";
-  mensaje.style.opacity = "1";
-  setTimeout(() => {
-    mensaje.style.opacity = "0";
-    setTimeout(() => {
-      mensaje.style.display = "none";
-    }, 500);
-  }, 2000);
-}
 
 const cursos = [
   { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
@@ -67,6 +56,18 @@ const cursos = [
 
 let creditos = 0;
 let userId = null;
+
+function mostrarMensajeDesbloqueo() {
+  const mensaje = document.getElementById("mensaje-desbloqueo");
+  mensaje.style.display = "block";
+  mensaje.style.opacity = "1";
+  setTimeout(() => {
+    mensaje.style.opacity = "0";
+    setTimeout(() => {
+      mensaje.style.display = "none";
+    }, 500);
+  }, 2000);
+}
 
 function actualizarCursos() {
   const container = document.getElementById("cursos-container");
