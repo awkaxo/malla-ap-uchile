@@ -2,27 +2,87 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🌷 Malla Curricular Administración Pública 🌷</title>
-  <link href="style.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <title>Malla Curricular Simple</title>
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f9f6ff;
+      color: #5a4a7a;
+      padding: 20px;
+      text-align: center;
+    }
+    .curso {
+      width: 280px;
+      margin: 10px auto;
+      padding: 15px;
+      background: #fceeff;
+      border-radius: 15px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #6d4e9d;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      transition: background 0.3s ease;
+    }
+    .curso.aprobado {
+      background: #d7f5e6;
+      color: #3a785f;
+      text-decoration: line-through;
+      cursor: default;
+    }
+    .curso.bloqueado {
+      background: #f3f0f7;
+      color: #b6a7c6;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
-
-  <h1>🌸 Malla Curricular de Administración Pública 🌸</h1>
-  <h2>Modo diplomacia activado ( ｡•̀ᴗ-)✧</h2>
-  
+  <h1>Malla Curricular Administración Pública 🌸</h1>
   <div id="creditos">Créditos Aprobados: 0</div>
   <div id="cursos-container"></div>
-  <button id="logout-btn">Cerrar Sesión 🚪</button>
-  <div id="mensaje-desbloqueo">🎉 ¡Nuevo curso desbloqueado! 📚</div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+  const cursos = [
+    { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
+    { nombre: "Introducción a la Gestión Pública", prerrequisitos: [], creditos: 8 },
+    { nombre: "Historia de las Instituciones Políticas", prerrequisitos: [], creditos: 8 },
+    { nombre: "Matemática para la Gestión II", prerrequisitos: ["Matemática para la Gestión I"], creditos: 8 }
+  ];
 
-  <script src="script.js"></script>
+  let creditos = 0;
 
+  function mostrarCursos() {
+    const container = document.getElementById("cursos-container");
+    container.innerHTML = "";
+    cursos.forEach(curso => {
+      const puedeAcceder = curso.prerrequisitos.every(pr => {
+        const c = cursos.find(cu => cu.nombre === pr);
+        return c && c.aprobado;
+      });
+
+      let clase = "";
+      if (curso.aprobado) clase = "aprobado";
+      else if (!puedeAcceder) clase = "bloqueado";
+
+      const div = document.createElement("div");
+      div.textContent = curso.nombre;
+      div.className = "curso " + clase;
+
+      if (clase === "") {
+        div.addEventListener("click", () => {
+          curso.aprobado = true;
+          creditos += curso.creditos;
+          document.getElementById("creditos").textContent = "Créditos Aprobados: " + creditos;
+          mostrarCursos();
+          alert("🎉 ¡Curso aprobado y desbloqueado!"); // Mensaje simple
+        });
+      }
+
+      container.appendChild(div);
+    });
+  }
+
+  mostrarCursos();
+</script>
 </body>
 </html>
