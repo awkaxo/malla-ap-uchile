@@ -2,27 +2,36 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🌷 Malla Curricular Administración Pública 🌷</title>
-  <link href="style.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <title>Test Malla Simple</title>
+  <style>
+    .curso {
+      background: #fceeff;
+      margin: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #6d4e9d;
+    }
+  </style>
 </head>
 <body>
-
-  <h1>🌸 Malla Curricular de Administración Pública 🌸</h1>
-  <h2>Modo diplomacia activado ( ｡•̀ᴗ-)✧</h2>
-  
-  <div id="creditos">Créditos Aprobados: 0</div>
+  <h1>Malla Curricular Simple</h1>
   <div id="cursos-container"></div>
-  <button id="logout-btn">Cerrar Sesión 🚪</button>
-  <div id="mensaje-desbloqueo">🎉 ¡Nuevo curso desbloqueado! 📚</div>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const cursos = [
+      { nombre: "Matemática para la Gestión I" },
+      { nombre: "Introducción a la Gestión Pública" },
+      { nombre: "Historia de las Instituciones Políticas" }
+    ];
 
-  <script src="script-test.js"></script>
-
+    const container = document.getElementById("cursos-container");
+    cursos.forEach(curso => {
+      const div = document.createElement("div");
+      div.className = "curso";
+      div.textContent = curso.nombre;
+      container.appendChild(div);
+    });
+  </script>
 </body>
 </html>
