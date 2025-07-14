@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Malla Curricular con Login Firebase</title>
+  <title>Login - Administración Pública</title>
   <style>
+    /* Colores pastel y estilos similares al anterior */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 15px;
+      max-width: 450px;
+      margin: 50px auto;
+      padding: 20px;
       background: #f9f6f2;
       color: #4a4a4a;
     }
@@ -19,12 +20,10 @@
     }
     form {
       background: #d7c9e3;
-      max-width: 400px;
-      margin: 15px auto;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 3px 6px rgba(122,111,155,0.3);
-      color: #3d335c;
+      margin-bottom: 25px;
     }
     input {
       width: 90%;
@@ -63,74 +62,6 @@
       min-height: 22px;
       color: #6a5d8f;
     }
-    #dashboard {
-      max-width: 900px;
-      margin: 20px auto;
-      background: #d7c9e3;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(122,111,155,0.3);
-      display: none;
-      color: #3d335c;
-    }
-    #creditos {
-      font-weight: 700;
-      font-size: 1.3em;
-      margin-bottom: 20px;
-      text-align: center;
-      color: #6a5d8f;
-    }
-    .curso {
-      display: inline-block;
-      width: 250px;
-      background: #eee3f5;
-      margin: 8px;
-      padding: 14px 18px;
-      border-radius: 12px;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      box-sizing: border-box;
-      color: #5a4899;
-      font-weight: 600;
-      box-shadow: 0 3px 6px rgba(122,111,155,0.2);
-    }
-    .curso.aprobado {
-      background: #a7c7e7;
-      color: #244e7e;
-      cursor: default;
-      text-decoration: line-through;
-      box-shadow: 0 4px 8px rgba(39,82,129,0.3);
-    }
-    .curso.bloqueado {
-      background: #f3edf9;
-      color: #b1a3d0;
-      cursor: default;
-      box-shadow: none;
-    }
-    .curso:hover:not(.bloqueado):not(.aprobado) {
-      background: #c6b9dc;
-      color: #372f58;
-      box-shadow: 0 5px 10px rgba(122,111,155,0.4);
-    }
-    #logout-btn {
-      display: block;
-      margin: 30px auto 0 auto;
-      background: #d6c1eb;
-      color: #5a4899;
-      border: none;
-      padding: 12px 28px;
-      border-radius: 14px;
-      cursor: pointer;
-      font-size: 1.1em;
-      font-weight: 700;
-      box-shadow: 0 3px 7px rgba(90,72,153,0.4);
-      transition: background-color 0.3s ease;
-    }
-    #logout-btn:hover {
-      background: #bfa2db;
-      color: #4a3a87;
-    }
   </style>
 </head>
 <body>
@@ -138,6 +69,7 @@
   <h1>Malla Curricular Administración Pública</h1>
 
   <div id="auth-container">
+
     <h2>Crear Cuenta</h2>
     <form id="register-form">
       <input type="email" id="register-email" placeholder="Email" required />
@@ -153,12 +85,7 @@
     </form>
 
     <div id="message"></div>
-  </div>
 
-  <div id="dashboard">
-    <div id="creditos">Créditos Aprobados: 0</div>
-    <div id="cursos-container"></div>
-    <button id="logout-btn">Cerrar Sesión</button>
   </div>
 
   <!-- Firebase -->
@@ -166,7 +93,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
-    // Aquí pones tu configuración de Firebase
     const firebaseConfig = {
       apiKey: "TU_API_KEY",
       authDomain: "TU_PROYECTO.firebaseapp.com",
@@ -179,134 +105,15 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // DOM Elements
-    const authContainer = document.getElementById("auth-container");
     const registerForm = document.getElementById("register-form");
     const loginForm = document.getElementById("login-form");
     const messageDiv = document.getElementById("message");
-    const dashboard = document.getElementById("dashboard");
-    const cursosContainer = document.getElementById("cursos-container");
-    const creditosDiv = document.getElementById("creditos");
-    const logoutBtn = document.getElementById("logout-btn");
 
-    // Cursos y prerrequisitos
-    const cursos = [
-      { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
-      { nombre: "Introducción a la Gestión Pública", prerrequisitos: [], creditos: 8 },
-      { nombre: "Historia de las Instituciones Políticas", prerrequisitos: [], creditos: 8 },
-      { nombre: "Tecnologías y Sistemas de Información", prerrequisitos: [], creditos: 8 },
-      { nombre: "Bases Jurídicas para la Administración", prerrequisitos: [], creditos: 8 },
-      { nombre: "Inglés I", prerrequisitos: [], creditos: 6 },
-      { nombre: "Curso Libre I", prerrequisitos: [], creditos: 8 },
-      { nombre: "Matemática para la Gestión II", prerrequisitos: ["Matemática para la Gestión I"], creditos: 8 },
-      { nombre: "Evolución y Complejidad de la Administración", prerrequisitos: ["Introducción a la Gestión Pública"], creditos: 8 },
-      { nombre: "Ideas y Debates Políticos Contemporáneos", prerrequisitos: [], creditos: 8 },
-      { nombre: "Epistemología de las Ciencias Sociales", prerrequisitos: [], creditos: 8 },
-      { nombre: "Marco Normativo I", prerrequisitos: ["Bases Jurídicas para la Administración"], creditos: 8 },
-      { nombre: "Inglés II", prerrequisitos: ["Inglés I"], creditos: 6 },
-      { nombre: "Curso Libre II", prerrequisitos: ["Curso Libre I"], creditos: 8 },
-      { nombre: "Estadística para la Gestión I", prerrequisitos: ["Matemática para la Gestión II"], creditos: 8 },
-      { nombre: "Comportamiento Humano en la Organización", prerrequisitos: ["Evolución y Complejidad de la Administración"], creditos: 8 },
-      { nombre: "Fenómenos Políticos", prerrequisitos: ["Ideas y Debates Políticos Contemporáneos"], creditos: 8 },
-      { nombre: "Microeconomía para la Gestión Pública", prerrequisitos: ["Matemática para la Gestión II"], creditos: 8 },
-      { nombre: "Marco Normativo II", prerrequisitos: ["Marco Normativo I"], creditos: 8 },
-      { nombre: "Métodos Cualitativos", prerrequisitos: ["Epistemología de las Ciencias Sociales"], creditos: 8 },
-      { nombre: "Política Internacional", prerrequisitos: ["Fenómenos Políticos"], creditos: 8 },
-      { nombre: "Diseño Organizacional", prerrequisitos: ["Comportamiento Humano en la Organización"], creditos: 8 },
-      { nombre: "Métodos Cuantitativos", prerrequisitos: ["Estadística para la Gestión I"], creditos: 8 },
-      { nombre: "Planeamiento Estratégico", prerrequisitos: ["Diseño Organizacional"], creditos: 8 },
-      { nombre: "Gestión Financiera Pública", prerrequisitos: ["Microeconomía para la Gestión Pública"], creditos: 8 },
-      { nombre: "Negociación y Resolución de Conflictos", prerrequisitos: ["Comportamiento Humano en la Organización"], creditos: 8 },
-      { nombre: "Ciclo y Evaluación de Políticas Públicas", prerrequisitos: ["Planeamiento Estratégico"], creditos: 8 },
-      { nombre: "Contabilidad Gubernamental", prerrequisitos: ["Gestión Financiera Pública"], creditos: 8 },
-      { nombre: "Gestión de Personas", prerrequisitos: ["Diseño Organizacional"], creditos: 8 },
-      { nombre: "Gestión de Proyectos", prerrequisitos: ["Planeamiento Estratégico"], creditos: 8 },
-      { nombre: "Electivo I", prerrequisitos: [], creditos: 8 },
-      { nombre: "Análisis Empírico de Políticas", prerrequisitos: ["Métodos Cuantitativos", "Métodos Cualitativos"], creditos: 8 },
-      { nombre: "Electivo II", prerrequisitos: ["Electivo I"], creditos: 8 },
-      { nombre: "Electivo III", prerrequisitos: ["Electivo II"], creditos: 8 },
-      { nombre: "Curso de Formación General", prerrequisitos: [], creditos: 8 },
-      { nombre: "Simulación de Asesoría Política", prerrequisitos: ["Gestión de Proyectos"], creditos: 8 },
-      { nombre: "Práctica Profesional", prerrequisitos: ["Ciclo y Evaluación de Políticas Públicas"], creditos: 12 },
-      { nombre: "Examen de Título", prerrequisitos: ["Análisis Empírico de Políticas"], creditos: 12 }
-    ];
-
-    // Estado guardado: aprobado por usuario (cursos aprobados)
-    let aprobados = [];
-
-    // Mostrar mensajes
     function showMessage(text, error = false) {
       messageDiv.textContent = text;
       messageDiv.style.color = error ? "crimson" : "#6a5d8f";
     }
 
-    // Guarda el progreso de los cursos aprobados en localStorage por usuario
-    function guardarEstado(uid) {
-      localStorage.setItem("malla_aprobados_" + uid, JSON.stringify(aprobados));
-    }
-    // Carga el progreso guardado
-    function cargarEstado(uid) {
-      const data = localStorage.getItem("malla_aprobados_" + uid);
-      aprobados = data ? JSON.parse(data) : [];
-    }
-
-    // Función para ver si un curso puede activarse (prerrequisitos aprobados)
-    function puedeActivar(curso) {
-      if (curso.prerrequisitos.length === 0) return true;
-      return curso.prerrequisitos.every(p => aprobados.includes(p));
-    }
-
-    // Renderiza la malla de cursos
-    function renderizarMalla() {
-      cursosContainer.innerHTML = "";
-      let totalCreditos = 0;
-
-      cursos.forEach(curso => {
-        const div = document.createElement("div");
-        div.classList.add("curso");
-
-        if (aprobados.includes(curso.nombre)) {
-          div.classList.add("aprobado");
-          totalCreditos += curso.creditos;
-        } else if (!puedeActivar(curso)) {
-          div.classList.add("bloqueado");
-        }
-
-        div.textContent = curso.nombre + " (" + curso.creditos + " créditos)";
-        div.title = "Prerrequisitos: " + (curso.prerrequisitos.length > 0 ? curso.prerrequisitos.join(", ") : "Ninguno");
-
-        if (!aprobados.includes(curso.nombre) && puedeActivar(curso)) {
-          div.addEventListener("click", () => {
-            aprobados.push(curso.nombre);
-            guardarEstado(auth.currentUser.uid);
-            renderizarMalla();
-          });
-        }
-
-        cursosContainer.appendChild(div);
-      });
-
-      creditosDiv.textContent = "Créditos Aprobados: " + totalCreditos;
-    }
-
-    // Mostrar panel dashboard y cargar estado
-    function mostrarDashboard() {
-      authContainer.style.display = "none";
-      dashboard.style.display = "block";
-      cargarEstado(auth.currentUser.uid);
-      renderizarMalla();
-      showMessage("");
-    }
-
-    // Ocultar dashboard y mostrar login
-    function mostrarLogin() {
-      dashboard.style.display = "none";
-      authContainer.style.display = "block";
-      showMessage("");
-      aprobados = [];
-    }
-
-    // Registro
     registerForm.addEventListener("submit", e => {
       e.preventDefault();
       const email = document.getElementById("register-email").value;
@@ -322,7 +129,6 @@
       registerForm.reset();
     });
 
-    // Login
     loginForm.addEventListener("submit", e => {
       e.preventDefault();
       const email = document.getElementById("login-email").value;
@@ -335,19 +141,13 @@
       loginForm.reset();
     });
 
-    // Logout
-    logoutBtn.addEventListener("click", () => {
-      auth.signOut();
-    });
-
-    // Estado de autenticación
     auth.onAuthStateChanged(user => {
       if (user) {
-        mostrarDashboard();
-      } else {
-        mostrarLogin();
+        // Usuario logueado, redirigir a malla.html
+        window.location.href = "malla.html?uid=" + user.uid;
       }
     });
   </script>
+
 </body>
 </html>
