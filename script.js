@@ -1,168 +1,143 @@
+// script.js
+
+const usuarioId = firebase.auth().currentUser?.uid || "anon";
+
+const creditosSpan = document.getElementById("creditos");
+const mensajeDesbloqueo = document.getElementById("mensaje-desbloqueo");
+const contenedoresPorSemestre = document.querySelectorAll(".semestre");
+
 const cursos = [
-  // Primer año, semestre I
-  { id: "mat1", nombre: "Matemática para la Gestión I", creditos: 5, prereqs: [], semestre: "I" },
-  { id: "ing1", nombre: "Inglés I", creditos: 3, prereqs: [], semestre: "I" },
-  { id: "hist", nombre: "Historia de las Instituciones Políticas y Administrativas de Chile", creditos: 5, prereqs: [], semestre: "I" },
-  { id: "tec", nombre: "Tecnologías y Sistemas de Información", creditos: 3, prereqs: [], semestre: "I" },
-  { id: "bases", nombre: "Bases Jurídicas para la Administración del Estado", creditos: 5, prereqs: [], semestre: "I" },
-  { id: "libre1", nombre: "Curso Libre", creditos: 2, prereqs: [], semestre: "I" },
-  // Primer año, semestre II
-  { id: "mat2", nombre: "Matemática para la Gestión II", creditos: 5, prereqs: ["mat1"], semestre: "II" },
-  { id: "evol", nombre: "Evolución y Complejidad de la Administración Pública", creditos: 6, prereqs: ["ing1"], semestre: "II" }, // en la tabla pusiste "Introducción a la Gestión Pública" pero no aparece, asumí inglés1
-  { id: "debates", nombre: "Ideas y Debates Políticos Contemporáneos", creditos: 5, prereqs: ["hist"], semestre: "II" },
-  { id: "epist", nombre: "Epistemología de las Ciencias Sociales", creditos: 5, prereqs: [], semestre: "II" },
-  { id: "marco1", nombre: "Marco Normativo para la Acción Administrativa I", creditos: 5, prereqs: ["bases"], semestre: "II" },
-  { id: "ing2", nombre: "Inglés II", creditos: 3, prereqs: ["ing1"], semestre: "II" },
-  // Segundo año, semestre III
-  { id: "estad1", nombre: "Estadística para la Gestión I", creditos: 5, prereqs: ["mat2"], semestre: "III" },
-  { id: "dinam", nombre: "Dinámicas de la Administración Pública Chilena", creditos: 6, prereqs: ["evol"], semestre: "III" },
-  { id: "fenom", nombre: "Estudio de los Fenómenos Políticos", creditos: 5, prereqs: ["debates"], semestre: "III" },
-  { id: "metod", nombre: "Metodología de la Investigación en Administración Pública", creditos: 5, prereqs: ["epist"], semestre: "III" },
-  { id: "marco2", nombre: "Marco Normativo para la Acción Administrativa II", creditos: 5, prereqs: ["marco1"], semestre: "III" },
-  { id: "ing3", nombre: "Inglés III", creditos: 3, prereqs: ["ing2"], semestre: "III" },
-  // Segundo año, semestre IV
-  { id: "estad2", nombre: "Estadística para la Gestión II", creditos: 5, prereqs: ["estad1"], semestre: "IV" },
-  { id: "diseño", nombre: "Diseño Organizacional", creditos: 8, prereqs: ["dinam"], semestre: "IV" },
-  { id: "adm_fen", nombre: "La Administración Pública y los Fenómenos Políticos", creditos: 5, prereqs: ["fenom"], semestre: "IV" },
-  { id: "metodCual", nombre: "Métodos Cualitativos para la Administración Pública", creditos: 5, prereqs: ["metod"], semestre: "IV" },
-  { id: "cfg2", nombre: "CFG", creditos: 2, prereqs: [], semestre: "IV" },
-  { id: "ing4", nombre: "Inglés IV", creditos: 3, prereqs: ["ing3"], semestre: "IV" },
-  { id: "comport", nombre: "Comportamiento Humano en la Organización", creditos: 4, prereqs: [], semestre: "IV" },
-  // Tercer año, semestre V
-  { id: "fenMicro", nombre: "Fenómenos Microeconómicos", creditos: 4, prereqs: ["mat2"], semestre: "V" },
-  { id: "gestProc", nombre: "Gestión de Procesos en Organizaciones Públicas", creditos: 6, prereqs: ["diseño"], semestre: "V" },
-  { id: "analInt", nombre: "Análisis Político Internacional", creditos: 4, prereqs: ["adm_fen"], semestre: "V" },
-  { id: "metCuant", nombre: "Métodos Cuantitativos para la Adm. Pública", creditos: 5, prereqs: ["estad2"], semestre: "V" },
-  { id: "basesCont", nombre: "Bases Contables para la Gestión Pública", creditos: 4, prereqs: [], semestre: "V" },
-  { id: "marcoPol", nombre: "Marco Analítico de las Políticas Públicas", creditos: 4, prereqs: ["metodCual"], semestre: "V" },
-  // Tercer año, semestre VI
-  { id: "fenMacro", nombre: "Fenómenos Macroeconómicos", creditos: 4, prereqs: ["fenMicro"], semestre: "VI" },
-  { id: "planEstr", nombre: "Planificación Estratégica en Organizaciones Públicas", creditos: 6, prereqs: ["gestProc"], semestre: "VI" },
-  { id: "negoci", nombre: "Negociación y Toma de Decisiones", creditos: 4, prereqs: ["comport"], semestre: "VI" },
-  { id: "gestTerr", nombre: "Gestión Territorial y Descentralización", creditos: 4, prereqs: ["marco2"], semestre: "VI" },
-  { id: "gestFin", nombre: "Gestión Financiera del Estado", creditos: 5, prereqs: ["basesCont"], semestre: "VI" },
-  { id: "formPol", nombre: "Formulación e Implementación de Políticas Públicas", creditos: 4, prereqs: ["marcoPol"], semestre: "VI" },
-  { id: "gestPers", nombre: "Gestión de Personas en Org. Públicas", creditos: 4, prereqs: ["comport"], semestre: "VI" },
-  // Cuarto año, semestre VII
-  { id: "ecoSec", nombre: "Economía del Sector Público", creditos: 4, prereqs: ["fenMacro", "fenMicro"], semestre: "VII" },
-  { id: "controlEval", nombre: "Control y Evaluación en Organizaciones Públicas", creditos: 6, prereqs: ["planEstr"], semestre: "VII" },
-  { id: "analProb", nombre: "Análisis Integrado de los Problemas Públicos", creditos: 8, prereqs: ["formPol"], semestre: "VII" },
-  { id: "contGov", nombre: "Contabilidad Gubernamental", creditos: 5, prereqs: ["gestFin"], semestre: "VII" },
-  { id: "evalPol", nombre: "Evaluación de Políticas Públicas", creditos: 4, prereqs: ["formPol"], semestre: "VII" },
-  { id: "libre4", nombre: "Curso Libre", creditos: 2, prereqs: [], semestre: "VII" },
-  // Cuarto año, semestre VIII
-  { id: "gestProy", nombre: "Gestión de Proyectos Sociales", creditos: 4, prereqs: ["evalPol"], semestre: "VIII" },
-  { id: "simAses", nombre: "Simulación de Asesoría", creditos: 7, prereqs: ["controlEval"], semestre: "VIII" },
-  { id: "comunEst", nombre: "Comunicación Estratégica y Marketing Político", creditos: 4, prereqs: [], semestre: "VIII" }, // Sin prereqs visible
-  { id: "semInvest", nombre: "Seminario de Investigación Aplicada", creditos: 7, prereqs: ["metCuant", "metodCual"], semestre: "VIII" },
-  { id: "audGov", nombre: "Auditoría Gubernamental", creditos: 5, prereqs: ["contGov"], semestre: "VIII" },
-  { id: "analEmp", nombre: "Análisis Empírico de Política Pública", creditos: 4, prereqs: ["metCuant"], semestre: "VIII" },
-  { id: "elect4", nombre: "Electivo IV", creditos: 5, prereqs: [], semestre: "VIII" },
-  { id: "cfg8", nombre: "CFG", creditos: 2, prereqs: [], semestre: "VIII" },
-  // Quinto año, semestre IX
-  { id: "evalProy", nombre: "Evaluación de Proyectos Sociales", creditos: 4, prereqs: ["gestProy"], semestre: "IX" },
-  { id: "elect1", nombre: "Electivo I", creditos: 5, prereqs: [], semestre: "IX" },
-  { id: "elect2", nombre: "Electivo II", creditos: 5, prereqs: [], semestre: "IX" },
-  { id: "elect3", nombre: "Electivo III", creditos: 5, prereqs: [], semestre: "IX" },
-  { id: "dirEtica", nombre: "Dirección y Ética Pública", creditos: 4, prereqs: ["analProb"], semestre: "IX" },
-  // Quinto año, semestre X
-  { id: "pracProf", nombre: "Práctica Profesional", creditos: 30, prereqs: cursos.filter(c => c.semestre !== "X").map(c => c.id), semestre: "X" }, // prereq todos los cursos anteriores
-  { id: "examenTit", nombre: "Examen de Título", creditos: 0, prereqs: ["pracProf"], semestre: "X" }
+  // 📘 Primer año - Semestre I
+  { nombre: "Matemática para la Gestión I", prerequisitos: [], creditos: 5, semestre: "I" },
+  { nombre: "Introducción a la Gestión Pública", prerequisitos: [], creditos: 8, semestre: "I" },
+  { nombre: "Historia de las Instituciones Políticas y Administrativas de Chile", prerequisitos: [], creditos: 5, semestre: "I" },
+  { nombre: "Tecnologías y Sistemas de Información", prerequisitos: [], creditos: 3, semestre: "I" },
+  { nombre: "Bases Jurídicas para la Administración del Estado", prerequisitos: [], creditos: 5, semestre: "I" },
+  { nombre: "Inglés I", prerequisitos: [], creditos: 3, semestre: "I" },
+  { nombre: "Curso Libre I", prerequisitos: [], creditos: 2, semestre: "I" },
+
+  // 📗 Primer año - Semestre II
+  { nombre: "Matemática para la Gestión II", prerequisitos: ["Matemática para la Gestión I"], creditos: 5, semestre: "II" },
+  { nombre: "Evolución y Complejidad de la Administración Pública", prerequisitos: ["Introducción a la Gestión Pública"], creditos: 6, semestre: "II" },
+  { nombre: "Ideas y Debates Políticos Contemporáneos", prerequisitos: ["Historia de las Instituciones Políticas y Administrativas de Chile"], creditos: 5, semestre: "II" },
+  { nombre: "Epistemología de las Ciencias Sociales", prerequisitos: [], creditos: 5, semestre: "II" },
+  { nombre: "Marco Normativo para la Acción Administrativa I", prerequisitos: ["Bases Jurídicas para la Administración del Estado"], creditos: 5, semestre: "II" },
+  { nombre: "Inglés II", prerequisitos: ["Inglés I"], creditos: 3, semestre: "II" },
+
+  // 📙 Segundo año - Semestre III
+  { nombre: "Estadística para la Gestión I", prerequisitos: ["Matemática para la Gestión II"], creditos: 5, semestre: "III" },
+  { nombre: "Dinámicas de la Administración Pública Chilena", prerequisitos: ["Evolución y Complejidad de la Administración Pública"], creditos: 6, semestre: "III" },
+  { nombre: "Estudio de los Fenómenos Políticos", prerequisitos: ["Ideas y Debates Políticos Contemporáneos"], creditos: 5, semestre: "III" },
+  { nombre: "Metodología de la Investigación en Administración Pública", prerequisitos: ["Epistemología de las Ciencias Sociales"], creditos: 5, semestre: "III" },
+  { nombre: "Marco Normativo para la Acción Administrativa II", prerequisitos: ["Marco Normativo para la Acción Administrativa I"], creditos: 5, semestre: "III" },
+  { nombre: "Inglés III", prerequisitos: ["Inglés II"], creditos: 3, semestre: "III" },
+
+  // 📕 Segundo año - Semestre IV
+  { nombre: "Estadística para la Gestión II", prerequisitos: ["Estadística para la Gestión I"], creditos: 5, semestre: "IV" },
+  { nombre: "Diseño Organizacional", prerequisitos: ["Dinámicas de la Administración Pública Chilena"], creditos: 8, semestre: "IV" },
+  { nombre: "La Administración Pública y los Fenómenos Políticos", prerequisitos: ["Estudio de los Fenómenos Políticos"], creditos: 5, semestre: "IV" },
+  { nombre: "Métodos Cualitativos para la Administración Pública", prerequisitos: ["Metodología de la Investigación en Administración Pública"], creditos: 5, semestre: "IV" },
+  { nombre: "CFG I", prerequisitos: [], creditos: 2, semestre: "IV" },
+  { nombre: "Inglés IV", prerequisitos: ["Inglés III"], creditos: 3, semestre: "IV" },
+  { nombre: "Comportamiento Humano en la Organización", prerequisitos: [], creditos: 4, semestre: "IV" },
+
+  // 📒 Tercer año - Semestre V
+  { nombre: "Fenómenos Microeconómicos", prerequisitos: ["Matemática para la Gestión II"], creditos: 4, semestre: "V" },
+  { nombre: "Gestión de Procesos en Organizaciones Públicas", prerequisitos: ["Diseño Organizacional"], creditos: 6, semestre: "V" },
+  { nombre: "Análisis Político Internacional", prerequisitos: ["La Administración Pública y los Fenómenos Políticos"], creditos: 4, semestre: "V" },
+  { nombre: "Métodos Cuantitativos para la Administración Pública", prerequisitos: ["Estadística para la Gestión II"], creditos: 5, semestre: "V" },
+  { nombre: "Bases Contables para la Gestión Pública", prerequisitos: [], creditos: 4, semestre: "V" },
+  { nombre: "Marco Analítico de las Políticas Públicas", prerequisitos: ["Métodos Cualitativos para la Administración Pública"], creditos: 4, semestre: "V" },
+
+  // 📔 Tercer año - Semestre VI
+  { nombre: "Fenómenos Macroeconómicos", prerequisitos: ["Fenómenos Microeconómicos"], creditos: 4, semestre: "VI" },
+  { nombre: "Planificación Estratégica en Organizaciones Públicas", prerequisitos: ["Gestión de Procesos en Organizaciones Públicas"], creditos: 6, semestre: "VI" },
+  { nombre: "Negociación y Toma de Decisiones", prerequisitos: ["Comportamiento Humano en la Organización"], creditos: 4, semestre: "VI" },
+  { nombre: "Gestión Territorial y Descentralización", prerequisitos: ["Marco Normativo para la Acción Administrativa II"], creditos: 4, semestre: "VI" },
+  { nombre: "Gestión Financiera del Estado", prerequisitos: ["Bases Contables para la Gestión Pública"], creditos: 5, semestre: "VI" },
+  { nombre: "Formulación e Implementación de Políticas Públicas", prerequisitos: ["Marco Analítico de las Políticas Públicas"], creditos: 4, semestre: "VI" },
+  { nombre: "Gestión de Personas en Organizaciones Públicas", prerequisitos: ["Comportamiento Humano en la Organización"], creditos: 4, semestre: "VI" },
+
+  // 📓 Cuarto año - Semestre VII
+  { nombre: "Economía del Sector Público", prerequisitos: ["Fenómenos Microeconómicos", "Fenómenos Macroeconómicos"], creditos: 4, semestre: "VII" },
+  { nombre: "Control y Evaluación en Organizaciones Públicas", prerequisitos: ["Planificación Estratégica en Organizaciones Públicas"], creditos: 6, semestre: "VII" },
+  { nombre: "Análisis Integrado de los Problemas Públicos", prerequisitos: ["Formulación e Implementación de Políticas Públicas"], creditos: 8, semestre: "VII" },
+  { nombre: "Contabilidad Gubernamental", prerequisitos: ["Gestión Financiera del Estado"], creditos: 5, semestre: "VII" },
+  { nombre: "Evaluación de Políticas Públicas", prerequisitos: ["Formulación e Implementación de Políticas Públicas"], creditos: 4, semestre: "VII" },
+  { nombre: "Curso Libre II", prerequisitos: [], creditos: 2, semestre: "VII" },
+
+  // 📚 Cuarto año - Semestre VIII
+  { nombre: "Gestión de Proyectos Sociales", prerequisitos: ["Evaluación de Políticas Públicas"], creditos: 4, semestre: "VIII" },
+  { nombre: "Simulación de Asesoría", prerequisitos: ["Control y Evaluación en Organizaciones Públicas"], creditos: 7, semestre: "VIII" },
+  { nombre: "Comunicación Estratégica y Marketing Político", prerequisitos: [], creditos: 4, semestre: "VIII" },
+  { nombre: "Seminario de Investigación Aplicada", prerequisitos: ["Métodos Cualitativos para la Administración Pública", "Métodos Cuantitativos para la Administración Pública"], creditos: 7, semestre: "VIII" },
+  { nombre: "Auditoría Gubernamental", prerequisitos: ["Contabilidad Gubernamental"], creditos: 5, semestre: "VIII" },
+  { nombre: "Análisis Empírico de Política Pública", prerequisitos: ["Métodos Cuantitativos para la Administración Pública"], creditos: 4, semestre: "VIII" },
+  { nombre: "Electivo IV", prerequisitos: [], creditos: 5, semestre: "VIII" },
+  { nombre: "CFG II", prerequisitos: [], creditos: 2, semestre: "VIII" },
+
+  // 📖 Quinto año - Semestre IX
+  { nombre: "Evaluación de Proyectos Sociales", prerequisitos: ["Gestión de Proyectos Sociales"], creditos: 4, semestre: "IX" },
+  { nombre: "Electivo I", prerequisitos: [], creditos: 5, semestre: "IX" },
+  { nombre: "Electivo II", prerequisitos: [], creditos: 5, semestre: "IX" },
+  { nombre: "Electivo III", prerequisitos: [], creditos: 5, semestre: "IX" },
+  { nombre: "Dirección y Ética Pública", prerequisitos: ["Análisis Integrado de los Problemas Públicos"], creditos: 4, semestre: "IX" },
+
+  // 🎓 Quinto año - Semestre X
+  { nombre: "Práctica Profesional", prerequisitos: ["Dirección y Ética Pública"], creditos: 30, semestre: "X" },
+  { nombre: "Examen de Título", prerequisitos: ["Práctica Profesional"], creditos: 0, semestre: "X" },
 ];
 
-// Función para cargar progreso guardado
-function cargarProgreso() {
-  const json = localStorage.getItem("progreso_malla");
-  if (!json) return {};
-  try {
-    return JSON.parse(json);
-  } catch {
-    return {};
-  }
+let cursosAprobados = JSON.parse(localStorage.getItem(`aprobados_${usuarioId}`)) || [];
+
+function guardarProgreso() {
+  localStorage.setItem(`aprobados_${usuarioId}`, JSON.stringify(cursosAprobados));
 }
 
-// Guardar progreso
-function guardarProgreso(progreso) {
-  localStorage.setItem("progreso_malla", JSON.stringify(progreso));
+function calcularCreditos() {
+  const total = cursos
+    .filter(c => cursosAprobados.includes(c.nombre))
+    .reduce((acc, cur) => acc + cur.creditos, 0);
+  creditosSpan.innerText = `Créditos aprobados: ${total}`;
 }
 
-// Verificar si se cumplen prerrequisitos
-function sePuedeMarcar(curso, progreso) {
-  return curso.prereqs.every(pr => progreso[pr] === true);
+function estaDesbloqueado(curso) {
+  return curso.prerequisitos.every(p => cursosAprobados.includes(p));
 }
 
-// Renderizar cursos
-function renderizarCursos() {
-  const contenedor = document.getElementById("contenedor-cursos");
-  contenedor.innerHTML = "";
+function crearTarjetaCurso(curso) {
+  const tarjeta = document.createElement("div");
+  tarjeta.className = "curso";
+  const desbloqueado = estaDesbloqueado(curso);
 
-  const progreso = cargarProgreso();
+  tarjeta.innerHTML = `
+    <h3>${curso.nombre}</h3>
+    <p><strong>Créditos:</strong> ${curso.creditos}</p>
+    <p><strong>Prerequisitos:</strong> ${curso.prerequisitos.join(", ") || "—"}</p>
+    <button ${!desbloqueado ? "disabled" : ""}>
+      ${cursosAprobados.includes(curso.nombre) ? "Aprobado ✅" : "Marcar como aprobado"}
+    </button>
+  `;
 
-  // Agrupar cursos por semestre
-  const semestres = {};
-  cursos.forEach(c => {
-    if (!semestres[c.semestre]) semestres[c.semestre] = [];
-    semestres[c.semestre].push(c);
+  const boton = tarjeta.querySelector("button");
+  boton.addEventListener("click", () => {
+    if (!cursosAprobados.includes(curso.nombre)) {
+      cursosAprobados.push(curso.nombre);
+      guardarProgreso();
+      mensajeDesbloqueo.style.display = "block";
+      setTimeout(() => mensajeDesbloqueo.style.display = "none", 2500);
+      render();
+    }
   });
 
-  // Contador créditos
-  let creditosAprobados = 0;
-
-  for (const semestre of Object.keys(semestres).sort()) {
-    const divSemestre = document.createElement("div");
-    divSemestre.className = "semestre";
-
-    const h3 = document.createElement("h3");
-    h3.textContent = `Semestre ${semestre}`;
-    divSemestre.appendChild(h3);
-
-    for (const curso of semestres[semestre]) {
-      const divCurso = document.createElement("div");
-      divCurso.className = "curso";
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.id = curso.id;
-      checkbox.disabled = !sePuedeMarcar(curso, progreso);
-      checkbox.checked = progreso[curso.id] || false;
-
-      checkbox.addEventListener("change", () => {
-        progreso[curso.id] = checkbox.checked;
-        guardarProgreso(progreso);
-        renderizarCursos();
-        mostrarMensajeDesbloqueo(curso.nombre);
-      });
-
-      const label = document.createElement("label");
-      label.htmlFor = curso.id;
-      label.textContent = `${curso.nombre} (${curso.creditos} créditos)`;
-
-      divCurso.appendChild(checkbox);
-      divCurso.appendChild(label);
-      divSemestre.appendChild(divCurso);
-
-      if (checkbox.checked) creditosAprobados += curso.creditos;
-    }
-
-    contenedor.appendChild(divSemestre);
-  }
-
-  // Actualizar contador
-  document.getElementById("creditos").textContent = `Créditos aprobados: ${creditosAprobados}`;
+  const contenedor = document.querySelector(`.semestre[data-semestre="${curso.semestre}"]`);
+  if (contenedor) contenedor.appendChild(tarjeta);
 }
 
-// Mensaje temporal de curso desbloqueado
-function mostrarMensajeDesbloqueo(nombreCurso) {
-  const mensaje = document.getElementById("mensaje-desbloqueo");
-  mensaje.textContent = `¡Curso desbloqueado! 🎉 - ${nombreCurso}`;
-  mensaje.style.display = "block";
-  mensaje.style.opacity = "1";
-
-  setTimeout(() => {
-    mensaje.style.opacity = "0";
-    setTimeout(() => (mensaje.style.display = "none"), 500);
-  }, 2000);
+function render() {
+  document.querySelectorAll(".semestre").forEach(s => (s.innerHTML = ""));
+  cursos.forEach(curso => crearTarjetaCurso(curso));
+  calcularCreditos();
 }
 
-// Inicializar
-document.addEventListener("DOMContentLoaded", renderizarCursos);
+render();
