@@ -10,12 +10,15 @@ import {
 
 // 🔥 Reemplaza estos datos con los de tu proyecto en Firebase
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID",
+ const firebaseConfig = {
+  apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
+  authDomain: "malla-interactiva-ap.firebaseapp.com",
+  projectId: "malla-interactiva-ap",
+  storageBucket: "malla-interactiva-ap.firebasestorage.app",
+  messagingSenderId: "982790383608",
+  appId: "1:982790383608:web:5c851cc78a9169c7df580d",
+  measurementId: "G-PDS3Z2T8JE"
+};
 };
 
 const app = initializeApp(firebaseConfig);
