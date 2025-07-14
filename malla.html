@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Malla Curricular - Administración Pública</title>
   <style>
     body {
@@ -84,19 +83,18 @@
   <div id="cursos-container"></div>
   <button id="logout-btn">Cerrar Sesión</button>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
     const firebaseConfig = {
-  apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
-  authDomain: "malla-interactiva-ap.firebaseapp.com",
-  projectId: "malla-interactiva-ap",
-  storageBucket: "malla-interactiva-ap.firebasestorage.app",
-  messagingSenderId: "982790383608",
-  appId: "1:982790383608:web:0c0100d098ba1713df580d",
-  measurementId: "G-D8F2168ZB3"
+      apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
+      authDomain: "malla-interactiva-ap.firebaseapp.com",
+      projectId: "malla-interactiva-ap",
+      storageBucket: "malla-interactiva-ap.appspot.com",
+      messagingSenderId: "982790383608",
+      appId: "1:982790383608:web:0c0100d098ba1713df580d",
+      measurementId: "G-D8F2168ZB3"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -201,7 +199,7 @@
         cargarEstado(user.uid);
         renderizarMalla();
       } else {
-        window.location.href = "index.html"; // Redirige a login si no hay usuario
+        window.location.href = "index.html";
       }
     });
   </script>
