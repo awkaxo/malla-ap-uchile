@@ -2,9 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🌸 Malla Curricular Administración Pública 🌸</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet" />
+  <title>🌷 Malla Curricular Diplomática 🌷</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Nunito', sans-serif;
@@ -14,11 +13,13 @@
       padding: 20px;
       text-align: center;
     }
+
     h1 {
       font-size: 2em;
       color: #9b71c7;
       margin-bottom: 5px;
     }
+
     h2 {
       font-weight: normal;
       color: #b68cd2;
@@ -26,6 +27,7 @@
       margin-top: 0;
       margin-bottom: 20px;
     }
+
     #creditos {
       font-weight: bold;
       font-size: 1.2em;
@@ -36,12 +38,14 @@
       color: #7b4992;
       box-shadow: 0 0 6px rgba(157, 102, 173, 0.2);
     }
+
     #cursos-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       margin-top: 20px;
     }
+
     .curso {
       width: 260px;
       margin: 10px;
@@ -55,21 +59,25 @@
       font-weight: 600;
       user-select: none;
     }
+
     .curso:hover:not(.bloqueado):not(.aprobado) {
       background: #efd6ff;
       transform: translateY(-3px);
     }
+
     .curso.aprobado {
       background: #d7f5e6;
       color: #3a785f;
       text-decoration: line-through;
       cursor: default;
     }
+
     .curso.bloqueado {
       background: #f3f0f7;
       color: #b6a7c6;
       cursor: not-allowed;
     }
+
     #logout-btn {
       margin-top: 30px;
       padding: 12px 30px;
@@ -82,9 +90,11 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+
     #logout-btn:hover {
       background: #f9a8d4;
     }
+
     #mensaje-desbloqueo {
       position: fixed;
       bottom: 20px;
@@ -100,25 +110,23 @@
       z-index: 1000;
       transition: opacity 0.3s ease;
       display: none;
-      user-select: none;
     }
   </style>
 </head>
 <body>
 
   <h1>🌸 Malla Curricular de Administración Pública 🌸</h1>
-  <h2>Modo diplomacia activado ( ｡•̀ᴗ-)✧</h2>
+  <h2>Modo diplomacia activado ( ｡•̀ •́)✧</h2>
   <div id="creditos">Créditos Aprobados: 0</div>
   <div id="cursos-container"></div>
   <button id="logout-btn">Cerrar Sesión 🚪</button>
-  <div id="mensaje-desbloqueo">🎉 ¡Nuevo curso desbloqueado! 📚</div>
+  <div id="mensaje-desbloqueo">&#127881; ¡Nuevo curso desbloqueado! 📚</div>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 
   <script>
-    // Configuración Firebase (pon tu configuración correcta aquí)
     const firebaseConfig = {
       apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
       authDomain: "malla-interactiva-ap.firebaseapp.com",
@@ -129,7 +137,6 @@
       measurementId: "G-D8F2168ZB3"
     };
 
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
@@ -175,7 +182,9 @@
     ];
 
     let creditos = 0;
+    let userEmail = null;
 
+    // Mostrar mensaje de desbloqueo por 2 segundos
     function mostrarMensajeDesbloqueo() {
       const mensaje = document.getElementById("mensaje-desbloqueo");
       mensaje.style.display = "block";
@@ -188,27 +197,56 @@
       }, 2000);
     }
 
+    // Guarda progreso en localStorage con key personalizada por usuario
+    function guardarProgreso() {
+      if (!userEmail) return;
+      const key = "malla-" + userEmail.toLowerCase();
+      const data = cursos.map(c => ({nombre: c.nombre, aprobado: c.aprobado || false}));
+      localStorage.setItem(key, JSON.stringify(data));
+      localStorage.setItem(key + "-creditos", creditos);
+    }
+
+    // Carga progreso guardado y marca cursos aprobados
+    function cargarProgreso() {
+      if (!userEmail) return;
+      const key = "malla-" + userEmail.toLowerCase();
+      const saved = localStorage.getItem(key);
+      const savedCreditos = localStorage.getItem(key + "-creditos");
+      if (saved) {
+        const data = JSON.parse(saved);
+        cursos.forEach(curso => {
+          const guardado = data.find(d => d.nombre === curso.nombre);
+          curso.aprobado = guardado ? guardado.aprobado : false;
+        });
+      }
+      creditos = savedCreditos ? parseInt(savedCreditos) : 0;
+      document.getElementById("creditos").textContent = `Créditos Aprobados: ${creditos}`;
+    }
+
+    // Actualiza la vista de cursos y su estado
     function actualizarCursos() {
       const container = document.getElementById("cursos-container");
       container.innerHTML = "";
 
       cursos.forEach(curso => {
-        const tieneTodosLosPrerrequisitos = curso.prerrequisitos.every(pr => {
-          const c = cursos.find(curso2 => curso2.nombre === pr);
-          return c && c.aprobado;
-        });
-        const estado = curso.aprobado ? 'aprobado' : (tieneTodosLosPrerrequisitos ? '' : 'bloqueado');
+        // Verifica si cumple con todos los prerrequisitos aprobados
+        const desbloqueado = curso.prerrequisitos.every(pr =>
+          cursos.find(c => c.nombre === pr)?.aprobado
+        );
+
+        const estado = curso.aprobado ? "aprobado" : (desbloqueado ? "" : "bloqueado");
 
         const div = document.createElement("div");
-        div.className = `curso ${estado}`;
+        div.className = "curso " + estado;
         div.textContent = curso.nombre;
 
-        if (estado === '') {
+        if (estado === "") {
           div.addEventListener("click", () => {
             curso.aprobado = true;
             creditos += curso.creditos;
             document.getElementById("creditos").textContent = `Créditos Aprobados: ${creditos}`;
             mostrarMensajeDesbloqueo();
+            guardarProgreso();
             actualizarCursos();
           });
         }
@@ -217,24 +255,20 @@
       });
     }
 
+    // Control autenticación y carga
     auth.onAuthStateChanged(user => {
       if (!user) {
+        // No hay usuario, vuelve a login
         window.location.href = "index.html";
-      } else {
-        creditos = 0;
-        cursos.forEach(c => c.aprobado = false);
-        actualizarCursos();
+        return;
       }
+      userEmail = user.email;
+      cargarProgreso();
+      actualizarCursos();
     });
 
     document.getElementById("logout-btn").addEventListener("click", () => {
-      auth.signOut()
-      .then(() => {
-        window.location.href = "index.html";
-      })
-      .catch(err => {
-        alert("Error cerrando sesión: " + err.message);
-      });
+      auth.signOut().catch(err => alert("Error cerrando sesión: " + err.message));
     });
   </script>
 </body>
