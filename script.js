@@ -1,11 +1,17 @@
-// script.js
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    const usuarioId = user.uid;
+    iniciarMalla(usuarioId);
+  } else {
+    window.location.href = "index.html";
+  }
+});
 
-const usuarioId = firebase.auth().currentUser?.uid || "anon";
-
-const creditosSpan = document.getElementById("creditos");
-const mensajeDesbloqueo = document.getElementById("mensaje-desbloqueo");
-const contenedoresPorSemestre = document.querySelectorAll(".semestre");
-
+function iniciarMalla(usuarioId) {
+  const creditosSpan = document.getElementById("creditos");
+  const mensajeDesbloqueo = document.getElementById("mensaje-desbloqueo");
+  const contenedoresPorSemestre = document.querySelectorAll(".semestre");
+  
 const cursos = [
   // 📘 Primer año - Semestre I
   { nombre: "Matemática para la Gestión I", prerequisitos: [], creditos: 5, semestre: "I" },
@@ -88,56 +94,57 @@ const cursos = [
   { nombre: "Examen de Título", prerequisitos: ["Práctica Profesional"], creditos: 0, semestre: "X" },
 ];
 
-let cursosAprobados = JSON.parse(localStorage.getItem(`aprobados_${usuarioId}`)) || [];
+  let cursosAprobados = JSON.parse(localStorage.getItem(`aprobados_${usuarioId}`)) || [];
 
-function guardarProgreso() {
-  localStorage.setItem(`aprobados_${usuarioId}`, JSON.stringify(cursosAprobados));
+  function guardarProgreso() {
+    localStorage.setItem(`aprobados_${usuarioId}`, JSON.stringify(cursosAprobados));
+  }
+
+  function calcularCreditos() {
+    const total = cursos
+      .filter(c => cursosAprobados.includes(c.nombre))
+      .reduce((acc, cur) => acc + cur.creditos, 0);
+    creditosSpan.innerText = `Créditos aprobados: ${total}`;
+  }
+
+  function estaDesbloqueado(curso) {
+    return curso.prerequisitos.every(p => cursosAprobados.includes(p));
+  }
+
+  function crearTarjetaCurso(curso) {
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "curso";
+    const desbloqueado = estaDesbloqueado(curso);
+
+    tarjeta.innerHTML = `
+      <h3>${curso.nombre}</h3>
+      <p><strong>Créditos:</strong> ${curso.creditos}</p>
+      <p><strong>Prerequisitos:</strong> ${curso.prerequisitos.join(", ") || "—"}</p>
+      <button ${!desbloqueado ? "disabled" : ""}>
+        ${cursosAprobados.includes(curso.nombre) ? "Aprobado ✅" : "Marcar como aprobado"}
+      </button>
+    `;
+
+    const boton = tarjeta.querySelector("button");
+    boton.addEventListener("click", () => {
+      if (!cursosAprobados.includes(curso.nombre)) {
+        cursosAprobados.push(curso.nombre);
+        guardarProgreso();
+        mensajeDesbloqueo.style.display = "block";
+        setTimeout(() => mensajeDesbloqueo.style.display = "none", 2500);
+        render();
+      }
+    });
+
+    const contenedor = document.querySelector(`.semestre[data-semestre="${curso.semestre}"]`);
+    if (contenedor) contenedor.appendChild(tarjeta);
+  }
+
+  function render() {
+    document.querySelectorAll(".semestre").forEach(s => (s.innerHTML = ""));
+    cursos.forEach(curso => crearTarjetaCurso(curso));
+    calcularCreditos();
+  }
+
+  render();
 }
-
-function calcularCreditos() {
-  const total = cursos
-    .filter(c => cursosAprobados.includes(c.nombre))
-    .reduce((acc, cur) => acc + cur.creditos, 0);
-  creditosSpan.innerText = `Créditos aprobados: ${total}`;
-}
-
-function estaDesbloqueado(curso) {
-  return curso.prerequisitos.every(p => cursosAprobados.includes(p));
-}
-
-function crearTarjetaCurso(curso) {
-  const tarjeta = document.createElement("div");
-  tarjeta.className = "curso";
-  const desbloqueado = estaDesbloqueado(curso);
-
-  tarjeta.innerHTML = `
-    <h3>${curso.nombre}</h3>
-    <p><strong>Créditos:</strong> ${curso.creditos}</p>
-    <p><strong>Prerequisitos:</strong> ${curso.prerequisitos.join(", ") || "—"}</p>
-    <button ${!desbloqueado ? "disabled" : ""}>
-      ${cursosAprobados.includes(curso.nombre) ? "Aprobado ✅" : "Marcar como aprobado"}
-    </button>
-  `;
-
-  const boton = tarjeta.querySelector("button");
-  boton.addEventListener("click", () => {
-    if (!cursosAprobados.includes(curso.nombre)) {
-      cursosAprobados.push(curso.nombre);
-      guardarProgreso();
-      mensajeDesbloqueo.style.display = "block";
-      setTimeout(() => mensajeDesbloqueo.style.display = "none", 2500);
-      render();
-    }
-  });
-
-  const contenedor = document.querySelector(`.semestre[data-semestre="${curso.semestre}"]`);
-  if (contenedor) contenedor.appendChild(tarjeta);
-}
-
-function render() {
-  document.querySelectorAll(".semestre").forEach(s => (s.innerHTML = ""));
-  cursos.forEach(curso => crearTarjetaCurso(curso));
-  calcularCreditos();
-}
-
-render();
