@@ -7,7 +7,7 @@
 }
 
 body {
-  background: linear-gradient(135deg, #e0d4f7, #f7e9f0);
+  background: linear-gradient(135deg, #f5f7ff, #e3e9ff); /* Azul lavanda muy suave */
   min-height: 100vh;
   color: #3b2a5f;
   padding: 1rem;
@@ -46,7 +46,7 @@ header p {
   background: #fff;
   padding: 1.8rem 2rem;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(114, 85, 145, 0.25);
+  box-shadow: 0 10px 25px rgba(114, 85, 145, 0.15);
   width: 280px;
   text-align: center;
   transition: transform 0.3s ease;
