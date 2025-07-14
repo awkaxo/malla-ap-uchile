@@ -3,92 +3,145 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login y Dashboard Firebase</title>
+  <title>Malla Curricular con Login Firebase</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      max-width: 400px;
-      margin: 30px auto;
-      padding: 10px;
-      background: #f0f0f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 15px;
+      background: #f9f6f2;
+      color: #4a4a4a;
     }
-    h2 {
+    h1, h2 {
       text-align: center;
+      color: #7a6f9b;
     }
     form {
-      background: white;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 6px #ccc;
+      background: #d7c9e3;
+      max-width: 400px;
+      margin: 15px auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 6px rgba(122,111,155,0.3);
+      color: #3d335c;
     }
     input {
-      display: block;
-      width: 95%;
-      padding: 10px;
-      margin: 10px auto;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #a99fcf;
+      font-size: 1em;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    input:focus {
+      border-color: #6a5d8f;
     }
     button {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background: #0069d9;
+      background: #a7c7e7;
+      color: #244e7e;
       border: none;
-      color: white;
-      font-size: 16px;
-      border-radius: 5px;
+      padding: 12px 25px;
+      font-weight: 700;
+      border-radius: 12px;
       cursor: pointer;
-      margin-top: 10px;
+      width: 100%;
+      font-size: 1.1em;
+      box-shadow: 0 4px 8px rgba(39,82,129,0.3);
+      transition: background-color 0.3s ease;
+      margin-top: 15px;
     }
     button:hover {
-      background: #004a9e;
-    }
-    #google-signin {
-      background: #dd4b39;
-      margin-bottom: 30px;
-    }
-    #google-signin:hover {
-      background: #b53b2d;
+      background: #7b9fd3;
     }
     #message {
       text-align: center;
-      font-weight: bold;
-      color: green;
-      min-height: 24px;
-      margin-top: 15px;
-    }
-    #message.error {
-      color: red;
+      margin-top: 10px;
+      font-weight: 600;
+      min-height: 22px;
+      color: #6a5d8f;
     }
     #dashboard {
-      background: white;
+      max-width: 900px;
+      margin: 20px auto;
+      background: #d7c9e3;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 6px #ccc;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(122,111,155,0.3);
+      display: none;
+      color: #3d335c;
+    }
+    #creditos {
+      font-weight: 700;
+      font-size: 1.3em;
+      margin-bottom: 20px;
       text-align: center;
+      color: #6a5d8f;
+    }
+    .curso {
+      display: inline-block;
+      width: 250px;
+      background: #eee3f5;
+      margin: 8px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      box-sizing: border-box;
+      color: #5a4899;
+      font-weight: 600;
+      box-shadow: 0 3px 6px rgba(122,111,155,0.2);
+    }
+    .curso.aprobado {
+      background: #a7c7e7;
+      color: #244e7e;
+      cursor: default;
+      text-decoration: line-through;
+      box-shadow: 0 4px 8px rgba(39,82,129,0.3);
+    }
+    .curso.bloqueado {
+      background: #f3edf9;
+      color: #b1a3d0;
+      cursor: default;
+      box-shadow: none;
+    }
+    .curso:hover:not(.bloqueado):not(.aprobado) {
+      background: #c6b9dc;
+      color: #372f58;
+      box-shadow: 0 5px 10px rgba(122,111,155,0.4);
     }
     #logout-btn {
-      margin-top: 20px;
-      background: #cc0000;
+      display: block;
+      margin: 30px auto 0 auto;
+      background: #d6c1eb;
+      color: #5a4899;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 700;
+      box-shadow: 0 3px 7px rgba(90,72,153,0.4);
+      transition: background-color 0.3s ease;
     }
     #logout-btn:hover {
-      background: #990000;
+      background: #bfa2db;
+      color: #4a3a87;
     }
   </style>
-  <!-- Firebase JS SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
 </head>
 <body>
 
-  <!-- Contenedor login y registro -->
+  <h1>Malla Curricular Administración Pública</h1>
+
   <div id="auth-container">
     <h2>Crear Cuenta</h2>
     <form id="register-form">
       <input type="email" id="register-email" placeholder="Email" required />
-      <input type="password" id="register-password" placeholder="Contraseña" required minlength="6" />
+      <input type="password" id="register-password" placeholder="Contraseña (mín. 6 caracteres)" required minlength="6" />
       <button type="submit">Crear Cuenta</button>
     </form>
 
@@ -99,124 +152,202 @@
       <button type="submit">Iniciar Sesión</button>
     </form>
 
-    <button id="google-signin">Iniciar sesión con Google</button>
-
     <div id="message"></div>
   </div>
 
-  <!-- Contenedor dashboard / malla -->
-  <div id="dashboard" style="display:none;">
-    <h2>Bienvenido <span id="user-email"></span></h2>
-    <p>Esta es la malla o contenido protegido para usuarios autenticados.</p>
+  <div id="dashboard">
+    <div id="creditos">Créditos Aprobados: 0</div>
+    <div id="cursos-container"></div>
     <button id="logout-btn">Cerrar Sesión</button>
   </div>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
   <script>
-    // Configura aquí con los datos de tu proyecto Firebase
+    // Aquí pones tu configuración de Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyAxzAJVTV6ioXf0wnyAx2s1-k9-I83xjB0",
-  authDomain: "malla-interactiva-ap.firebaseapp.com",
-  projectId: "malla-interactiva-ap",
-  storageBucket: "malla-interactiva-ap.firebasestorage.app",
-  messagingSenderId: "982790383608",
-  appId: "1:982790383608:web:5c851cc78a9169c7df580d",
-  measurementId: "G-PDS3Z2T8JE"
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_PROYECTO.firebaseapp.com",
+      projectId: "TU_PROYECTO",
+      storageBucket: "TU_PROYECTO.appspot.com",
+      messagingSenderId: "TU_MESSAGING_ID",
+      appId: "TU_APP_ID"
     };
 
-    // Inicializa Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    const registerForm = document.getElementById('register-form');
-    const loginForm = document.getElementById('login-form');
-    const googleBtn = document.getElementById('google-signin');
-    const messageDiv = document.getElementById('message');
+    // DOM Elements
+    const authContainer = document.getElementById("auth-container");
+    const registerForm = document.getElementById("register-form");
+    const loginForm = document.getElementById("login-form");
+    const messageDiv = document.getElementById("message");
+    const dashboard = document.getElementById("dashboard");
+    const cursosContainer = document.getElementById("cursos-container");
+    const creditosDiv = document.getElementById("creditos");
+    const logoutBtn = document.getElementById("logout-btn");
 
-    const authContainer = document.getElementById('auth-container');
-    const dashboard = document.getElementById('dashboard');
-    const userEmailSpan = document.getElementById('user-email');
-    const logoutBtn = document.getElementById('logout-btn');
+    // Cursos y prerrequisitos
+    const cursos = [
+      { nombre: "Matemática para la Gestión I", prerrequisitos: [], creditos: 8 },
+      { nombre: "Introducción a la Gestión Pública", prerrequisitos: [], creditos: 8 },
+      { nombre: "Historia de las Instituciones Políticas", prerrequisitos: [], creditos: 8 },
+      { nombre: "Tecnologías y Sistemas de Información", prerrequisitos: [], creditos: 8 },
+      { nombre: "Bases Jurídicas para la Administración", prerrequisitos: [], creditos: 8 },
+      { nombre: "Inglés I", prerrequisitos: [], creditos: 6 },
+      { nombre: "Curso Libre I", prerrequisitos: [], creditos: 8 },
+      { nombre: "Matemática para la Gestión II", prerrequisitos: ["Matemática para la Gestión I"], creditos: 8 },
+      { nombre: "Evolución y Complejidad de la Administración", prerrequisitos: ["Introducción a la Gestión Pública"], creditos: 8 },
+      { nombre: "Ideas y Debates Políticos Contemporáneos", prerrequisitos: [], creditos: 8 },
+      { nombre: "Epistemología de las Ciencias Sociales", prerrequisitos: [], creditos: 8 },
+      { nombre: "Marco Normativo I", prerrequisitos: ["Bases Jurídicas para la Administración"], creditos: 8 },
+      { nombre: "Inglés II", prerrequisitos: ["Inglés I"], creditos: 6 },
+      { nombre: "Curso Libre II", prerrequisitos: ["Curso Libre I"], creditos: 8 },
+      { nombre: "Estadística para la Gestión I", prerrequisitos: ["Matemática para la Gestión II"], creditos: 8 },
+      { nombre: "Comportamiento Humano en la Organización", prerrequisitos: ["Evolución y Complejidad de la Administración"], creditos: 8 },
+      { nombre: "Fenómenos Políticos", prerrequisitos: ["Ideas y Debates Políticos Contemporáneos"], creditos: 8 },
+      { nombre: "Microeconomía para la Gestión Pública", prerrequisitos: ["Matemática para la Gestión II"], creditos: 8 },
+      { nombre: "Marco Normativo II", prerrequisitos: ["Marco Normativo I"], creditos: 8 },
+      { nombre: "Métodos Cualitativos", prerrequisitos: ["Epistemología de las Ciencias Sociales"], creditos: 8 },
+      { nombre: "Política Internacional", prerrequisitos: ["Fenómenos Políticos"], creditos: 8 },
+      { nombre: "Diseño Organizacional", prerrequisitos: ["Comportamiento Humano en la Organización"], creditos: 8 },
+      { nombre: "Métodos Cuantitativos", prerrequisitos: ["Estadística para la Gestión I"], creditos: 8 },
+      { nombre: "Planeamiento Estratégico", prerrequisitos: ["Diseño Organizacional"], creditos: 8 },
+      { nombre: "Gestión Financiera Pública", prerrequisitos: ["Microeconomía para la Gestión Pública"], creditos: 8 },
+      { nombre: "Negociación y Resolución de Conflictos", prerrequisitos: ["Comportamiento Humano en la Organización"], creditos: 8 },
+      { nombre: "Ciclo y Evaluación de Políticas Públicas", prerrequisitos: ["Planeamiento Estratégico"], creditos: 8 },
+      { nombre: "Contabilidad Gubernamental", prerrequisitos: ["Gestión Financiera Pública"], creditos: 8 },
+      { nombre: "Gestión de Personas", prerrequisitos: ["Diseño Organizacional"], creditos: 8 },
+      { nombre: "Gestión de Proyectos", prerrequisitos: ["Planeamiento Estratégico"], creditos: 8 },
+      { nombre: "Electivo I", prerrequisitos: [], creditos: 8 },
+      { nombre: "Análisis Empírico de Políticas", prerrequisitos: ["Métodos Cuantitativos", "Métodos Cualitativos"], creditos: 8 },
+      { nombre: "Electivo II", prerrequisitos: ["Electivo I"], creditos: 8 },
+      { nombre: "Electivo III", prerrequisitos: ["Electivo II"], creditos: 8 },
+      { nombre: "Curso de Formación General", prerrequisitos: [], creditos: 8 },
+      { nombre: "Simulación de Asesoría Política", prerrequisitos: ["Gestión de Proyectos"], creditos: 8 },
+      { nombre: "Práctica Profesional", prerrequisitos: ["Ciclo y Evaluación de Políticas Públicas"], creditos: 12 },
+      { nombre: "Examen de Título", prerrequisitos: ["Análisis Empírico de Políticas"], creditos: 12 }
+    ];
 
-    function showMessage(msg, error = false) {
-      messageDiv.textContent = msg;
-      if (error) {
-        messageDiv.classList.add('error');
-      } else {
-        messageDiv.classList.remove('error');
-      }
+    // Estado guardado: aprobado por usuario (cursos aprobados)
+    let aprobados = [];
+
+    // Mostrar mensajes
+    function showMessage(text, error = false) {
+      messageDiv.textContent = text;
+      messageDiv.style.color = error ? "crimson" : "#6a5d8f";
     }
 
-    // Crear cuenta
-    registerForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('register-email').value;
-      const password = document.getElementById('register-password').value;
+    // Guarda el progreso de los cursos aprobados en localStorage por usuario
+    function guardarEstado(uid) {
+      localStorage.setItem("malla_aprobados_" + uid, JSON.stringify(aprobados));
+    }
+    // Carga el progreso guardado
+    function cargarEstado(uid) {
+      const data = localStorage.getItem("malla_aprobados_" + uid);
+      aprobados = data ? JSON.parse(data) : [];
+    }
 
+    // Función para ver si un curso puede activarse (prerrequisitos aprobados)
+    function puedeActivar(curso) {
+      if (curso.prerrequisitos.length === 0) return true;
+      return curso.prerrequisitos.every(p => aprobados.includes(p));
+    }
+
+    // Renderiza la malla de cursos
+    function renderizarMalla() {
+      cursosContainer.innerHTML = "";
+      let totalCreditos = 0;
+
+      cursos.forEach(curso => {
+        const div = document.createElement("div");
+        div.classList.add("curso");
+
+        if (aprobados.includes(curso.nombre)) {
+          div.classList.add("aprobado");
+          totalCreditos += curso.creditos;
+        } else if (!puedeActivar(curso)) {
+          div.classList.add("bloqueado");
+        }
+
+        div.textContent = curso.nombre + " (" + curso.creditos + " créditos)";
+        div.title = "Prerrequisitos: " + (curso.prerrequisitos.length > 0 ? curso.prerrequisitos.join(", ") : "Ninguno");
+
+        if (!aprobados.includes(curso.nombre) && puedeActivar(curso)) {
+          div.addEventListener("click", () => {
+            aprobados.push(curso.nombre);
+            guardarEstado(auth.currentUser.uid);
+            renderizarMalla();
+          });
+        }
+
+        cursosContainer.appendChild(div);
+      });
+
+      creditosDiv.textContent = "Créditos Aprobados: " + totalCreditos;
+    }
+
+    // Mostrar panel dashboard y cargar estado
+    function mostrarDashboard() {
+      authContainer.style.display = "none";
+      dashboard.style.display = "block";
+      cargarEstado(auth.currentUser.uid);
+      renderizarMalla();
+      showMessage("");
+    }
+
+    // Ocultar dashboard y mostrar login
+    function mostrarLogin() {
+      dashboard.style.display = "none";
+      authContainer.style.display = "block";
+      showMessage("");
+      aprobados = [];
+    }
+
+    // Registro
+    registerForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
+      showMessage("Creando cuenta...");
       auth.createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          showMessage(`Cuenta creada: ${userCredential.user.email}`);
-          registerForm.reset();
-        })
-        .catch(error => {
-          showMessage(`Error: ${error.message}`, true);
-        });
-    });
-
-    // Iniciar sesión
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-
-      auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          showMessage(`Sesión iniciada: ${userCredential.user.email}`);
-          loginForm.reset();
-        })
-        .catch(error => {
-          showMessage(`Error: ${error.message}`, true);
-        });
-    });
-
-    // Iniciar con Google
-    googleBtn.addEventListener('click', () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(result => {
-          showMessage(`Sesión iniciada con Google: ${result.user.email}`);
-        })
-        .catch(error => {
-          showMessage(`Error: ${error.message}`, true);
-        });
-    });
-
-    // Cerrar sesión
-    logoutBtn.addEventListener('click', () => {
-      auth.signOut()
         .then(() => {
-          showMessage('Sesión cerrada');
+          showMessage("Cuenta creada. Iniciando sesión...");
         })
-        .catch(error => {
-          showMessage(`Error: ${error.message}`, true);
+        .catch(err => {
+          showMessage("Error: " + err.message, true);
         });
+      registerForm.reset();
     });
 
-    // Detectar cambios en la autenticación y mostrar/ocultar UI
+    // Login
+    loginForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+      showMessage("Iniciando sesión...");
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(err => {
+          showMessage("Error: " + err.message, true);
+        });
+      loginForm.reset();
+    });
+
+    // Logout
+    logoutBtn.addEventListener("click", () => {
+      auth.signOut();
+    });
+
+    // Estado de autenticación
     auth.onAuthStateChanged(user => {
       if (user) {
-        // Usuario está logueado
-        authContainer.style.display = 'none';
-        dashboard.style.display = 'block';
-        userEmailSpan.textContent = user.email;
-        showMessage(''); // Limpia mensajes
+        mostrarDashboard();
       } else {
-        // No hay usuario logueado
-        authContainer.style.display = 'block';
-        dashboard.style.display = 'none';
-        userEmailSpan.textContent = '';
+        mostrarLogin();
       }
     });
   </script>
-
 </body>
 </html>
